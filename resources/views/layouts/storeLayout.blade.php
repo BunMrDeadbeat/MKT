@@ -2,7 +2,6 @@
 @section('title', 'DurankMKT | Store')
 @section('description', 'Tienda DuranMkt')
 @section('styles')
-@vite(['resources/css/store.css'])
 @endsection
 @section('LayoutBody')
     <header class="bg-primary text-white shadow-md">
