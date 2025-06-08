@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\landingController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenController;
@@ -33,9 +34,7 @@ Route::post('/ordenes/crear', [OrdenController::class, 'store'])->middleware('au
 
 Route::get('/store', [ProductController::class,'loadStore'])->middleware('auth')->name('store.main');
 
-Route::get('/', function(){
-     return view('testLanding');
-})->name('main');
+Route::get('/', [landingController::class,'index'])->name('main');
 
 Route::get('/welcomeBack', function(){
      return Inertia::location('/');

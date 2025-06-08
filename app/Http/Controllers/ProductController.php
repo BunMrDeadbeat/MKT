@@ -15,20 +15,15 @@ use Illuminate\Database\QueryException;
 class ProductController extends Controller
 {
 
-     public function show($id) // Route model binding injects the Product instance
+     public function show($slug) 
     {
-        // Eager load relationships to avoid N+1 query problems
-        $product = Product::findOrFail($id);
-        $product->load(['category', 'galleries', 'options']);
-        //dd($product->options);
-        // Ensure product is active or user has permission to view
+        
+        $product = Product::where('slug', $slug)
+            ->with(['category', 'galleries', 'options'])
+            ->firstOrFail();
         if ($product->status !== 'active') {
-            // You might want to show a specific page or a 404
-            // For now, let's assume only active products are publicly viewable
             abort(404);
         }
-
-        // Pass the product data to a Blade view
         return view('productDetail', compact('product'));
     }
 

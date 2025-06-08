@@ -229,6 +229,17 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             background: rgba(255, 255, 255, 0.1);
         }
+        @keyframes color-change {
+            0% { fill: magenta; }
+            20% { fill: pink; }
+            40% { fill: cyan; }
+            60% { fill: yellow; }
+            80% { fill: lime; }
+            100% { fill: magenta; }
+        }
+        .circle {
+            animation: color-change 2s infinite;
+        }
 @layer base {
     * {
         @apply border-border;

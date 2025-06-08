@@ -5,14 +5,14 @@
 @endsection
 @section('LayoutBody')
     <header class="bg-primary text-white shadow-md">
-        <div class="container mx-auto px-4 py-4">
+        <div class="container mx-auto px-3 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
                     <a href="{{ '/' }}" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                         <span>Volver</span>
                     </a>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-1">
                         <i class="fas fa-power-off text-mktGreen text-2xl"></i>
                         <h1 class="text-2xl font-bold">DURAN<span class="text-mktGreen">MKT</span><span class="text-sm"> store</h1>
                     </div>

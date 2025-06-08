@@ -5,7 +5,7 @@
                         @endphp
                         @if ($featuredGallery&&$featuredGallery->image&&($product->status=='active'))
                             <div class="product-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all">
-                            <a href="{{ route('products.show', $product->id) }}">
+                            <a href="{{ route('products.show', $product->slug) }}">
                                 <div class="h-48 bg-gray-200 flex items-center justify-center">
                                     <img src="{{ asset('storage/' . $featuredGallery->image)}}" alt="{{ $product->name }}" class="max-h-full max-w-full">
                                             

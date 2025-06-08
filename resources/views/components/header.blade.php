@@ -1,6 +1,6 @@
 @props(['headerTitle' => 'Dashboard'])
 
-<header class="header bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between sticky top-0">
+<header class="header bg-white border-b border-gray-200 py-4 px-4 flex items-center justify-between sticky top-0">
     <div class="flex items-center">
         <button onclick="toggleSidebar()" class="mx-4 text-gray-600 hover:text-gray-900">
             <i class="text-xl bg-gray-400 rounded-l p-3"><<</i>
