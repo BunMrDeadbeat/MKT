@@ -131,6 +131,6 @@
 
 </body>
 @section('scripts')
- <script src = "{{ asset('js/productScripts.js') }}" defer></script>
-     <script src = "{{ asset('js/productModalScrips.js') }}" defer></script>
-     @endsection
+    <script src="{{ asset('js/productScripts.js') }}" defer></script>
+    <script src="{{ asset('js/productModalScrips.js') }}" defer></script>
+@endsection

@@ -3,6 +3,7 @@
 
 
     @section('content')
+
          @if (session('error'))
                                 <script>
                                     alert("{{ session('error') }}");
@@ -65,16 +66,38 @@
                     </div>
                 </section>
 
+
+                @if (isset($sections['productCards']) && $sections['productCards'])
                 @include('partials.lander.productCards')
+                @endif
+
+                @if (isset($sections['impresion']) && $sections['impresion'])
                 @include('partials.lander.impresion')
+                @endif
+
+                @if (isset($sections['puntosVenta']) && $sections['puntosVenta'])
                 @include('partials.lander.puntosVenta')
+                @endif
+
+                @if (isset($sections['displayCursos']) && $sections['displayCursos'])
                 @include('partials.lander.displayCursos')
+                @endif
+
+                @if (isset($sections['webDev']) && $sections['webDev'])
                 @include('partials.lander.webDev')
+                @endif
+
+                @if (isset($sections['partners']) && $sections['partners'])
                 @include('partials.lander.partners')
+                @endif
 
-
+                @if (isset($sections['experience']) && $sections['experience'])
                 @include('partials.lander.experience')
+                @endif
+
+                @if (isset($sections['plans']) && $sections['plans'])
                 @include('partials.lander.plans')
+                @endif
 
                  <section id="contacto" class="mt-24 max-w-4xl mx-auto px-4  rounded-2xl p-4">
                     <div class="text-center mb-12">
@@ -178,10 +201,11 @@
                     </div>
                 </section>
 
-
+                 @if (isset($sections['gpadilla']) && $sections['gpadilla'])
                 @include('partials.lander.gstop')
+                @endif
             </div>
-            
+
     @endsection
 @section('scripts')
     <script>

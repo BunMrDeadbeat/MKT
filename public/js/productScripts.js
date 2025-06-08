@@ -1,8 +1,8 @@
 
        
-        let currentTab = 'products';
-        let currentEditId = null;
-        let deleteCallback = null;
+        //let currentTab = 'products';
+       // let currentEditId = null;
+        //let deleteCallback = null;
 
         // prenda el dashboard
         document.addEventListener('DOMContentLoaded', function() {
@@ -54,7 +54,7 @@
             document.getElementById(`${tabName}-tab`).classList.add('active');
         }
 
-        // Modal funcion
+        let selectedFiles = [];
         function openProductModal() {
             const modal = document.getElementById('product-modal');
             
@@ -289,7 +289,7 @@
         });
 
 
-        let selectedFiles = [];
+        
         document.getElementById('product-gallery-upload').addEventListener('change', function(e) {
             const files = e.target.files;
             const galleryPreview = document.getElementById('product-gallery-preview');

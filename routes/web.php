@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    
+    Route::get('/landing', [landingController::class, 'editSections'])->name('admin.lander');
+    Route::put('/landing', [landingController::class, 'updateSections'])->name('sections.update');
     Route::get('/ordenes', [OrdenController::class, 'loadOrdersAdmin'])->name('admin.orders');
     Route::get('/ordenes/{id}/details', [OrdenController::class, 'show']);
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -19,9 +22,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/productos/edit/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::get('/productos/edit/{id}', [ProductController::class, 'loadEditProducts'])->name('products.startupdate');
     Route::delete('/productos/destroy/{id}', [ProductController::class, 'destroy'])->name('products.delete');
+
     Route::get('/', function () {
-    return view('blank');
-    });
+    return view('blank');});
 });
 Route::get('/products/filter/{categoryId}', [ProductController::class, 'filterByCategory']);
 

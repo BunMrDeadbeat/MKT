@@ -36,9 +36,9 @@
                                     >
                                 </div>
                                 <div class="mb-4">
-                                    <label for="edit-product-description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                                    <textarea id="edit-product-description" name="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-mktPurple focus:border-mktPurple">{{ $editProduct->description }}</textarea>
-                                </div>
+    <label for="product-description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+    <x-trix-input id="product-description" name="description" :value="old('description', $editProduct->description?->toTrixHtml())" autocomplete="off" />
+</div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <label for="edit-product-price" class="block text-sm font-medium text-gray-700 mb-1">Precio</label>

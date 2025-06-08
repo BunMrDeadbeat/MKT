@@ -20,6 +20,7 @@
             </svg>
             <div class="relative py-48 px-8 bg-black/1">
                 <div class="text-center md:w-1/2 flex flex-col mx-auto">
+                    <a class="text-sm font-semibold text-cyan-700 mb-4">Brought to you by </a>
                     <a class="text-7xl font-extrabold text-cyan-500 mb-4">THE </a>
                     <a class="text-7xl font-extrabold text-purple-500 mb-4">G-STOP</a>
                 </div>

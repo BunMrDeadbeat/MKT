@@ -5,11 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Tonysm\RichTextLaravel\Models\Traits\HasRichText;
 
 class Product extends Model
 {
 
-     use HasFactory;
+    use HasFactory;
+    /**
+     * The dynamic rich text attributes.
+     *
+     * @var array<int|string, string>
+     */
     protected $fillable = ['name', 'slug', 'description', 'type', 'price',
         'category_id', 'status', 'image'];
 
