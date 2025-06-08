@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+
 @extends('layouts.mainHeaderLayout')
 
-<body id="index">
 
     @section('content')
          @if (session('error'))
@@ -185,7 +183,7 @@
             </div>
             
     @endsection
-
+@section('scripts')
     <script>
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -196,7 +194,7 @@
                 });
             });
         });
-    </script>
-</body>
+    </script>  
+    @endsection
 
-</html>
+

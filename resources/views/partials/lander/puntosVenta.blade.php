@@ -1,6 +1,6 @@
 <section class="relative py-16 px-6 mt-12 bg-gradient-to-br from-teal-600 to-blue-700 border-4 border-blue-400 rounded-3xl max-w-6xl mx-auto overflow-hidden shadow-2xl" aria-labelledby="showcase-title">
     <div class="absolute inset-0 z-0">
-        <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('{{ asset('storage/images/pacificSoft.jpg') }}');"></div>
+        <div class="absolute inset-0 bg-cover bg-center opacity-20"></div>
         <div class="absolute inset-0 bg-black opacity-30"></div> </div>
 
     <div class="relative z-10 max-w-7xl mx-auto">

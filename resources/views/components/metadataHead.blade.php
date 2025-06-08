@@ -14,4 +14,6 @@
 </head>
 <body class="bg-stone-200 text-gray-900">
     @yield('LayoutBody')
+    @yield('scripts')
 </body>
+</html>

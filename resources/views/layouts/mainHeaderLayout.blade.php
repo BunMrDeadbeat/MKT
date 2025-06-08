@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 @extends('components.metadataHead')
 @section('LayoutBody')
     <header class="bg-mktPurple shadow flex-auto">
@@ -46,4 +44,3 @@
         </div>
     </footer> 
 @endsection
-</html>
