@@ -1,15 +1,13 @@
-<form id="customizationForm">
-    @csrf
-        <div class="mb-6">
+<div class="mb-6">
             <div class="form-control">
                 <label class="form-label">Tamaño cuadrado (en m)</label>
                 <div class="size-input-container">
-                    <input type="number" name="alto" class="form-input size-input" placeholder="Alto" min="1">
+                    <input type="number" name="alto" class="form-input size-input" placeholder="Alto" min="1" value='1'>
                     <span class="size-separator">X</span>
-                    <input type="number" name="ancho" class="form-input size-input" placeholder="Ancho" min="1">
+                    <input type="number" name="ancho" class="form-input size-input" placeholder="Ancho" min="1" value='1'>
                 </div>
             </div>
-            
+            <input class="hidden" value="{{ $productid }}" name="producto_id">
             <div class="form-control">
                 <label class="form-label">Diseño</label>
                 <div id="file-upload-container" class="file-upload">
@@ -52,4 +50,3 @@
                 </select>
             </div>
         </div>
-    </form>

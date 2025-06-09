@@ -1,19 +1,21 @@
 @extends('components.metadataHead')
 @section('title', 'DurankMKT | Store')
 @section('description', 'Tienda DuranMkt')
-@section('styles')
-@endsection
 @section('LayoutBody')
     <header class="bg-primary text-white shadow-md">
         <div class="container mx-auto px-3 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
-                    <a href="{{ '/' }}" class="back-btn">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Volver</span>
+                    <a  href="{{ url('/')}}" >
+                        <i class="fas fa-house"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a  href="{{ url('/store')}}" >
+                        <i class="fas fa-store"></i>
+                        <span>Tienda</span> 
                     </a>
                     <div class="flex items-center space-x-1">
-                        <i class="fas fa-power-off text-mktGreen text-2xl"></i>
+                        <i class="fas fa-power-off text-mktGreen text-2xl sm:hidden"></i>
                         <h1 class="text-2xl font-bold">DURAN<span class="text-mktGreen">MKT</span><span class="text-sm"> store</h1>
                     </div>
                 </div>
@@ -75,5 +77,4 @@
             </div>
         </div>
     </footer>
-    @yield('scripts')
 @endsection

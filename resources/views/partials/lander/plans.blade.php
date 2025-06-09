@@ -3,7 +3,7 @@
                                           background-blend-mode: overlay;
                                           background-position: center;
                                           background-repeat: repeat;
-                                          background-size: 20%;
+                                          background-size: 30%;
                                           background-attachment: fixed;
                                           background-position: center;">
         <div class="relative py-12 px-8 bg-purple-800/80">

@@ -4,19 +4,6 @@
         <div class="content flex-1 overflow-auto">
             <!-- Main Content -->
             <main class="p-6">
-                <!-- Product Management Tabs -->
-                <div class="bg-white rounded-lg shadow mb-6">
-                    <div class="border-b border-gray-200">
-                        <nav class="flex -mb-px">
-                            <button onclick="switchTab('products')" class="tab-button py-4 px-6 text-center border-b-2 font-medium text-sm border-mktPurple text-mktPurple">
-                                <i class="fas fa-box mr-2"></i> Productos
-                            </button>
-                            <button onclick="switchTab('categories')" class="tab-button py-4 px-6 text-center border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                <i class="fas fa-tags mr-2"></i> Categorías
-                            </button>
-                        </nav>
-                    </div>
-                </div>
 
                 <!-- Products Tab Content -->
                 <div id="products-tab" class="tab-content active">

@@ -20,7 +20,20 @@
     </div>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"  defer></script>
-   
-   
+    <script>
+   function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('sidebarCollapsed') === 'true') {
+        document.querySelector('.sidebar').classList.add('collapsed');
+        
+    }
+    
+    });
+    </script>
      
 @endsection

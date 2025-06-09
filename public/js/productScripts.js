@@ -1,12 +1,13 @@
 
        
-        //let currentTab = 'products';
-       // let currentEditId = null;
-        //let deleteCallback = null;
+        let currentTab = 'products';
+        let currentEditId = null;
+        let deleteCallback = null;
 
         // prenda el dashboard
+        
+           
         document.addEventListener('DOMContentLoaded', function() {
-            loadCategories();
             const searchInput = document.getElementById('product-search');
             const categorySelect = document.getElementById('product-category');
             const statusSelect = document.getElementById('product-status');
@@ -35,8 +36,48 @@
             searchInput.addEventListener('input', applyFilters);
             categorySelect.addEventListener('change', applyFilters);
             statusSelect.addEventListener('change', applyFilters);
-        });
 
+            const toolbarOptions = [
+                // Header
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                // Font & Size
+                [{ 'font': [] }], 
+                ['bold', 'italic', 'underline', 'strike'],
+                ['blockquote', 'code-block'],
+                [{ 'align': [] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }],
+            ];
+
+            // Initialize Editors
+            const quilladd = new Quill('#editorA', {
+                theme: 'snow',
+                modules: {
+                    toolbar: toolbarOptions
+                }
+            });
+            const contentInputa = document.getElementById('description');
+            quilladd.on('text-change', function () {
+                contentInputa.value = quilladd.root.innerHTML;
+            });
+
+            const editor = document.getElementById('editorE');
+            if (editor && !editor.classList.contains('ql-container')) {
+                const quilledit = new Quill('#editorE', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: toolbarOptions
+                    }
+                });
+
+                const contentInput = document.getElementById('editdescription');
+                quilledit.on('text-change', function () {
+                    contentInput.value = quilledit.root.innerHTML;
+                });
+            }
+        });
         // Tab switching
         function switchTab(tabName) {
             currentTab = tabName;
@@ -130,59 +171,13 @@
             alert("Alerta. primero deben de guardarse las imagenes nuevas para usarlas como thumbnail");
         }
 
-        function openCategoryModal(categoryId = null) {
-            currentEditId = categoryId;
-            const modal = document.getElementById('category-modal');
-            const title = document.getElementById('category-modal-title');
-            
-            if (categoryId) {
-                title.textContent = 'Editar Categoría';
-                // In a real app, you would load the category data here
-                const category = sampleCategories.find(c => c.id === categoryId);
-                if (category) {
-                    document.getElementById('category-name').value = category.name;
-                    document.getElementById('category-description').value = category.description;
-                    // Set other fields as needed
-                }
-            } else {
-                title.textContent = 'Nueva Categoría';
-                // Reset form
-                document.getElementById('category-name').value = '';
-                document.getElementById('category-description').value = '';
-                // Reset other fields as needed
-            }
-            
-            modal.classList.remove('hidden');
-        }
+        
 
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('collapsed');
         }
 
-        function openLayoutModal(layoutId = null) {
-            currentEditId = layoutId;
-            const modal = document.getElementById('layout-modal');
-            const title = document.getElementById('layout-modal-title');
-            
-            if (layoutId) {
-                title.textContent = 'Editar Diseño';
-                // In a real app, you would load the layout data here
-                const layout = sampleLayouts.find(l => l.id === layoutId);
-                if (layout) {
-                    document.getElementById('layout-name').value = layout.name;
-                    document.getElementById('layout-description').value = layout.description;
-                    // Set other fields as needed
-                }
-            } else {
-                title.textContent = 'Nuevo Diseño';
-                // Reset form
-                document.getElementById('layout-name').value = '';
-                document.getElementById('layout-description').value = '';
-                // Reset other fields as needed
-            }
-            
-            modal.classList.remove('hidden');
-        }
+        
 
         function closeModal(modalId) {
             
@@ -211,41 +206,10 @@
         }
 
         
-        function loadCategories() {
-            // const categoriesContainer = document.querySelector('#categories-tab .grid');
-            // categoriesContainer.innerHTML = '';
-            
-            // sampleCategories.forEach(category => {
-            //     const card = document.createElement('div');
-            //     card.className = 'bg-white rounded-lg shadow overflow-hidden';
-            //     card.innerHTML = `
-            //         <div class="p-4 flex items-center">
-            //             <div class="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden">
-            //                 <img class="h-full w-full object-cover" src="${category.image}" alt="${category.name}">
-            //             </div>
-            //             <div class="ml-4">
-            //                 <h3 class="text-lg font-medium text-gray-900">${category.name}</h3>
-            //                 <p class="text-sm text-gray-500">${category.productCount} productos</p>
-            //             </div>
-            //         </div>
-            //         <div class="px-4 pb-4">
-            //             <p class="text-sm text-gray-600">${category.description}</p>
-            //         </div>
-            //         <div class="bg-gray-50 px-4 py-3 flex justify-end">
-            //             <button onclick="openCategoryModal(${category.id})" class="text-mktPurple hover:text-mktPurple-dark mr-3">
-            //                 <i class="fas fa-edit"></i>
-            //             </button>
-            //             <button onclick="openDeleteModal('categoría', ${category.id}, deleteCategory)" class="text-red-600 hover:text-red-900">
-            //                 <i class="fas fa-trash"></i>
-            //             </button>
-            //         </div>
-            //     `;
-            //     categoriesContainer.appendChild(card);
-            // });
-        }
+        
 
 
-        // Image upload preview
+        // Image upload p review
         document.getElementById('product-image-upload').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const maxSize = 40 * 1024 * 1024;
@@ -257,37 +221,23 @@
                  if (file.size > maxSize)
                 {
 
-                 errorElement.textContent = 'Imagen demasiado grande. El tamaño maximo es 40MB.';
+                 errorElement.textContent = 'Imagen demasiado grande. El tamaño maximo es 10MB.';
                 }
                 else
                 {const reader = new FileReader();
                 reader.onload = function(event) {
-                    document.querySelector('.product-image-preview').innerHTML = `<div class="relative">
+                    document.querySelector('.product-image-preview').innerHTML = `
                     <img src="${event.target.result}" class="w-full h-full object-contain">
                     <button onclick="removeProductImage()" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                         <i class="fas fa-times"></i>
                     </button>
-                </div>`;
+                `;
                 };
                 reader.readAsDataURL(file);}
             }
         });
 
-       
-
-        document.getElementById('category-image-upload').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    document.querySelector('#category-modal .product-image-preview').innerHTML = `<img src="${event.target.result}" class="w-full h-full object-contain">`;
-                };
-                reader.readAsDataURL(file);
-
-            }
-        });
-
+    
 
         
         document.getElementById('product-gallery-upload').addEventListener('change', function(e) {

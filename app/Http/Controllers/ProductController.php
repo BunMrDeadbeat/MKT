@@ -47,12 +47,15 @@ class ProductController extends Controller
 
     public function loadStore()
     {
-        $categorias = Category::all();
+         $categorias = Category::all();
         $productos = Product::with('options')->paginate(20);
         return view('store', compact( 'categorias', 'productos'));
     }
     public function filterByCategory($categoryId)
-    {
+    {   if($categoryId == 0){
+            $productos = Product::paginate(12);
+            return view('partials.tienda.listaProductos', compact('productos'))->render();
+        }
         $productos = Product::where('category_id', $categoryId)->paginate(12);
         return view('partials.tienda.listaProductos', compact('productos'))->render();
     }
@@ -61,7 +64,6 @@ class ProductController extends Controller
     {
         $products = Product::with('options')->paginate();
         $editProduct = Product::with(['category', 'galleries', 'options'])->findOrFail($id);
-        //dd($product->options);
         $categorias = Category::all();
         $options = Option::where('is_active', true)->get();
         $showedit='';
@@ -78,7 +80,7 @@ class ProductController extends Controller
             'price' => 'nullable|numeric',
             'category' => 'required|integer|exists:categories,id',
             'status' => 'required|in:active,inactive',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:40960',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:102400',
             'selected_options' => 'nullable|array',
             'selected_options.*' => 'integer|exists:options,id',
@@ -195,5 +197,13 @@ class ProductController extends Controller
         catch (\Exception $e) {
         return redirect()->back()->with('error', 'Error de lado del servidor: ' . $e->getMessage());
          }
+    }
+
+    public function loadStoreFiltered($categoryId)
+    {
+        $productos = Product::where('category_id', $categoryId)->paginate(12);
+
+        $categorias = Category::all();
+        return view('store', compact('productos','categorias'));
     }
 }

@@ -1,6 +1,9 @@
 @extends('layouts.storeLayout')
+
+
 @section('content')
 @include('partials.breadcrumbs')
+
     @php
           $featuredGallery = $product->galleries->firstWhere('is_featured', 1);
           $otherGalleries = $product->galleries;
@@ -11,8 +14,10 @@
         }
     }
     @endphp
+
+
     @if ($product->type == 'product')
-        <section class="container mx-auto px-4 py-8">
+    <section class="container mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
                 <x-productGallery 
@@ -43,11 +48,25 @@
         </div>
     </section>
     @endif
-    
 
-    
+@endsection
 
-    {{-- @include('partials.productDescription')  --}}
-    @endsection
+
     @section('scripts')
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const options = {
+                readOnly: true,
+                modules: {
+                    toolbar: null
+                },
+                theme: 'snow'
+            };
+            const quill = new Quill('#richDescription', options);
+        });
+    </script>
     <script src = "{{ asset('js/productDetail.js') }}" defer>
+    </script>
+    
+    @endsection

@@ -1,11 +1,38 @@
 @extends('layouts.storeLayout')
     @section('content')
         <!-- Hero Section -->
+        
         <section id="hero-section" class="bg-gradient-to-r from-primary to-mktPurple text-white py-16 transition-all duration-500 bg-cover bg-center">
     <div class="container mx-auto px-4 text-center ">
         <h2 id="hero-title" class="text-4xl md:text-5xl font-bold mb-4">Soluciones Impresas y Digitales para Tu Negocio</h2>
         <p id="hero-description" class="text-xl md:text-2xl mb-8 text-shadow-lg/50 text-shadow-black z-auto">Impulsa tu presencia con nuestros productos y servicios</p>
+        <p id="hero-description-2" class="text-md md:text-xl mb-8 text-shadow-lg/50 text-shadow-black z-auto">Seleccióne una categoría para filtrar las opciones:</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="#"
+                   class="
+                       category-card
+                       h-40
+                       rounded-lg
+                       bg-cover
+                       bg-center
+                       flex
+                       items-end
+                       p-4
+                       shadow-lg
+                       hover:shadow-xl
+                       transition-all
+                       duration-300 transform
+                       hover:-translate-y-2
+                   "
+                   data-category-id="0",
+                   data-category-image-url="/storage/images/mktPlace.png"
+                   data-category-name="El alcance completo de nuestra empresa."
+                   style="background-image: linear-gradient(to top, rgba(0,0,0,10), transparent), url('/storage/images/MARKETING-DIGITAL.WEBP')"
+                   data-category-description="Una vista amplia a todos nuestros productos y servicios"> {{-- Asegúrate de tener una descripción en tu modelo de categoría --}}
+                    <div>
+                        <h3 class="text-white text-xl font-bold capitalize">Todos</h3>
+                    </div>
+                </a>
             @foreach($categorias as $category)
                 <a href="#"
                    class="
@@ -38,20 +65,20 @@
 </section>
 
  
-         <section class="products-section my-12 mx-5">
-                <h2 class="text-3xl font-bold mb-6 text-primary">Nuestros Productos</h2>
+         <section class="products-section" style="background-image: url('/storage/images/tienda.webp'); background-size: 15%; background-repeat: repeat; background-attachment: fixed;">
+                <h2 class="text-3xl font-bold mb-6 text-stone-200 px-3 pb-5 pt-3 from-slate-900/80 to-emerald-300/10 bg-gradient-to-br   ">Nuestros Productos</h2>
                 <div id="products-container">
                 @include('partials.tienda.listaProductos', ['productos' => $productos])
                 </div>
 
                 <!-- Pagination -->
-                <div class="mt-8">
+                <div class="mt-8 from-beige to-mktPurple bg-gradient-to-b p-4 shadow-md">
                     {{ $productos->links() }}
                 </div>
-            </section>
+            </section> 
     @endsection
 
-</html>
+
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {

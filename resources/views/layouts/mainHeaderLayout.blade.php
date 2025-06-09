@@ -1,6 +1,6 @@
 @extends('components.metadataHead')
 @section('LayoutBody')
-    <header class="bg-mktPurple shadow flex-auto">
+    <header class="bg-mktPurple shadow flex-auto md:sticky top-0 z-50">
         <nav
             class="bg-mktPurple p-3 shadow-lg hover:bg-indigo-950 hover:shadow-lime-500/50 duration-300 ease-in sticky top-0 z-50  ">
             <div class="flex flex-col items-center gap-3 md:flex-row md:justify-between md:gap-0">
