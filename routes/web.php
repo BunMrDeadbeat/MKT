@@ -23,6 +23,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/usuarios', [UserController::class, 'loadUsers'])->name('admin.users');
 
     Route::get('/categorias', [CategoriesController::class, 'index'])->name('admin.categories');
+    Route::get('/categorias-editing', [CategoriesController::class, 'indexEditMode'])->name('admin.categories.editMode');
     Route::get('/categorias/{id}', [CategoriesController::class, 'indexProducts'])->name('admin.categories.showProducts');
     Route::get('/categoria-add', [CategoriesController::class, 'indexAdder'])->name('admin.categories.showAdder');
     Route::post('/categorias/add', [CategoriesController::class, 'store'])->name('admin.categories.store');
@@ -51,6 +52,8 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->group(function () {
 
     Route::get('/dashboard', [UserController::class, 'loadDashboard'])->name('user.dash');
 });
+
+
 
 Route::post('/ordenes/crear', [OrdenController::class, 'store'])->middleware('auth')->name('orders.store');
 

@@ -2,7 +2,7 @@
     @section('content')
         <!-- Hero Section -->
         
-        <section id="hero-section" class="bg-gradient-to-r from-primary to-mktPurple text-white py-16 transition-all duration-500 bg-cover bg-center">
+        <section id="hero-section" class="bg-gradient-to-r from-primary to-mktPurple text-white py-16 transition-all duration-500 bg-cover bg-center ">
     <div class="container mx-auto px-4 text-center ">
         <h2 id="hero-title" class="text-4xl md:text-5xl font-bold mb-4">Soluciones Impresas y Digitales para Tu Negocio</h2>
         <p id="hero-description" class="text-xl md:text-2xl mb-8 text-shadow-lg/50 text-shadow-black z-auto">Impulsa tu presencia con nuestros productos y servicios</p>
@@ -50,10 +50,10 @@
                        duration-300 transform
                        hover:-translate-y-2
                    "
-                   style="background-image: linear-gradient(to top, rgba(0,0,0,0.7), transparent), url('/storage/images/{{$category->name}}.jpg')"
+                   style="background-image: linear-gradient(to top, rgba(0,0,0,0.7), transparent), url('/storage/{{$category->main_picture}}')"
                    data-category-id="{{ $category->id }}"
                    data-category-name="{{ $category->name }}"
-                   data-category-image-url="/storage/images/{{ Str::slug($category->name) }}.jpg" {{-- Usamos Str::slug para URL --}}
+                   data-category-image-url="/storage/{{$category->big_picture }}" 
                    data-category-description="{{ $category->description ?? 'No hay descripción disponible para esta categoría.' }}"> {{-- Asegúrate de tener una descripción en tu modelo de categoría --}}
                     <div>
                         <h3 class="text-white text-xl font-bold capitalize">{{ $category->name }}</h3>
@@ -65,7 +65,7 @@
 </section>
 
  
-         <section class="products-section" style="background-image: url('/storage/images/tienda.webp'); background-size: 15%; background-repeat: repeat; background-attachment: fixed;">
+         <section class="products-section" style="background-image: url('/storage/images/tienda.webp'); background-size: 45%; md:background-size: 15%; background-repeat: repeat; background-attachment: fixed;" >
                 <h2 class="text-3xl font-bold mb-6 text-stone-200 px-3 pb-5 pt-3 from-slate-900/80 to-emerald-300/10 bg-gradient-to-br   ">Nuestros Productos</h2>
                 <div id="products-container">
                 @include('partials.tienda.listaProductos', ['productos' => $productos])

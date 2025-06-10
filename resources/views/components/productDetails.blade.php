@@ -1,6 +1,6 @@
-@props(['title', 'price', 'description', 'productid'])
+@props(['title', 'price', 'description', 'productid','options'])
 
-<div id="ProductDetails">
+<div id="ProductDetails" class="w-full md:w-1/2">
     <h1 class="text-3xl font-bold text-primary mb-2">{{ $title }}</h1>
 
     <div class="mb-6">
@@ -14,15 +14,12 @@
         @endif
     </div>
 
-    <div id='richDescription'class="text-gray-700 mb-6 quill-content rounded-lg p-4 bg-stone-100">
-        {{-- Using Quill for rich text display --}}
-        {!! $description !!}
-    </div>
-
+    
+    <h3 class=" font-bold text-2xl">Opciones para personalización:</h3>
     {{-- @include('partials.customizationOptions') --}}
     <form id="customizationForm" action="{{ route('orders.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        @include('partials.customizationOptions', ['productid' => $productid])
+        @include('partials.customizationOptions')
 
         <div class="flex flex-col md:flex-row gap-4 mb-6">
             <button id="buyButton" type="submit"

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -55,7 +56,8 @@ class CategoriesController extends Controller
         $categories= Category::with('products')->get();
         $showModal = false;
         $showadder = true;
-        return view('adminCategories', compact('categories', 'showModal', 'showadder'));
+        $editMode = false; 
+        return view('adminCategories', compact('categories', 'showModal', 'showadder', 'editMode'));
     }
     
     public function index()
@@ -63,7 +65,8 @@ class CategoriesController extends Controller
         $categories = Category::with('products')->get();
         $showModal = false;
         $showadder = false;
-        return view('adminCategories', compact('categories', 'showModal', 'showadder'));
+        $editMode = false; 
+        return view('adminCategories', compact('categories', 'showModal', 'showadder', 'editMode'));
     }
 
     public function indexProducts($id)
@@ -72,14 +75,68 @@ class CategoriesController extends Controller
         $prodcategory = Category::with('products')->findOrFail($id);
         $showModal = true;
         $showadder = false;
-        return view('adminCategories', compact('categories', 'prodcategory', 'showModal', 'showadder'));
+        $editMode = false; 
+        return view('adminCategories', compact('categories', 'prodcategory', 'showModal', 'showadder', 'editMode'));
     }
     public function destroy(Category $category)
     {
+
+        if ($category->main_picture != null) {
+            Storage::disk('public')->delete($category->main_picture);
+        }
+
+
+        if ($category->big_picture != null) {
+            Storage::disk('public')->delete($category->big_picture);
+        }
         $category->delete();
+        
 
         return redirect()->route('admin.categories')->with('success', 'Categoría eliminada correctamente.');
     }
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'description' => 'nullable|string',
+            'main_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'big_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+        ]);
+        
+        // Actualiza el nombre y descripción
+        $category->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? '',
+        ]);
+        // Maneja las imágenes
+        if ($request->hasFile('main_picture')) {
+            if($category->main_picture!=null){
+            Storage::disk('public')->delete($category->main_picture);
+          }
+            $category->main_picture = $request->file('main_picture')->store('categories/image', 'public');
+        }
 
+        if ($request->hasFile('big_picture')) {
+            if($category->big_picture!=null){
+            Storage::disk('public')->delete($category->big_picture);
+          }
+            $category->big_picture = $request->file('big_picture')->store('categories/big', 'public');
+        }
+
+
+        
+
+        $category->save();
+
+        return redirect()->route('admin.categories.editMode')->with('success', 'Categoría actualizada correctamente.');
+    }
     
+    public function indexEditMode()
+    {
+        $categories = Category::with('products')->get();
+        $showModal = false;
+        $showadder = false;
+        $editMode = true; 
+        return view('adminCategories', compact('categories', 'showModal', 'showadder', 'editMode'));
+    }
 }

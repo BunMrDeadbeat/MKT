@@ -212,7 +212,7 @@
         // Image upload p review
         document.getElementById('product-image-upload').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            const maxSize = 40 * 1024 * 1024;
+            const maxSize = 10 * 1024 * 1024;
             const errorElement = document.getElementById('thumb-file-size-error');
             errorElement.textContent = '';
     

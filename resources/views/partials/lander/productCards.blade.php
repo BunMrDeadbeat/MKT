@@ -9,12 +9,16 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         @foreach ($products as $product)
+                        @if ($product->status=='active')
+            
+        
                         <x-lander.serviceCard 
                             :image="$product->galleries->first()->image" 
                             :title="$product->name" 
                             :description="$product->description"
                             :productSlug="$product->slug" 
                             animationDelay="0.2s" />
+                            @endif
                     @endforeach
                     </div>
                 </section>

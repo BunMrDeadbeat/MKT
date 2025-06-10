@@ -1,5 +1,6 @@
 <div class="flex flex-wrap p-5 m-5 gap-6 justify-center">
     @foreach($productos as $product)
+        
             @php
         $featuredGallery = $product->galleries->firstWhere('is_featured', 1);
             @endphp

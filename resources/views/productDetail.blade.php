@@ -2,29 +2,33 @@
 
 
 @section('content')
+<section style="background-image: url('/storage/images/tienda.webp'); background-size: 30%; background-repeat: repeat; background-attachment: fixed;">
 @include('partials.breadcrumbs')
-
+    
     @php
-          $featuredGallery = $product->galleries->firstWhere('is_featured', 1);
-          $otherGalleries = $product->galleries;
-          $galleryImageUrls = [];
-    foreach ($otherGalleries as $gallery) {
-        if ($gallery->image) { // Ensure the image path exists
-            $galleryImageUrls[] = asset('storage/' . $gallery->image);
-        }
+$featuredGallery = $product->galleries->firstWhere('is_featured', 1);
+$otherGalleries = $product->galleries;
+$galleryImageUrls = [];
+foreach ($otherGalleries as $gallery) {
+    if ($gallery->image) { // Ensure the image path exists
+        $galleryImageUrls[] = asset('storage/' . $gallery->image);
     }
+}
     @endphp
 
 
     @if ($product->type == 'product')
-    <section class="container mx-auto px-4 py-8">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+    <section class="container mx-auto px-2 py-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden  shadow-zinc-700">
+            <div class="flex flex-col md:flex-row gap-8 p-6">
                 <x-productGallery 
                 :thumbnail="$featuredGallery->image"
-                :images="$galleryImageUrls" />
+                :images="$galleryImageUrls"
+                :description="$product->description"/>
+                 
                 
                 <x-productDetails 
+                    :options="$product->options"
                     :productid="$product->id"
                     :title="$product->name"
                     :price="$product->price"
@@ -48,25 +52,28 @@
         </div>
     </section>
     @endif
-
+</section>
 @endsection
 
 
     @section('scripts')
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const options = {
-                readOnly: true,
-                modules: {
-                    toolbar: null
-                },
-                theme: 'snow'
-            };
-            const quill = new Quill('#richDescription', options);
-        });
-    </script>
-    <script src = "{{ asset('js/productDetail.js') }}" defer>
-    </script>
-    
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const options = {
+                    readOnly: true,
+                    modules: {
+                        toolbar: null
+                    },
+                    theme: 'snow'
+                };
+                const quill = new Quill('#richDescription', options);
+
+   
+               
+            });
+        </script>
+        <script src = "{{ asset('js/productDetail.js') }}" defer>
+        </script>
+
     @endsection

@@ -45,44 +45,65 @@ class OrdenController extends Controller
     }
     public function store(Request $request)
     {
-        // Validate input
         try {
             $user = Auth::user();
             if (!$user) {
-                return response()->back()->with(['success' => false, 'message' => 'Usuario no autenticado'], 401);
+                return redirect()->back()->with(['success' => false, 'message' => 'Usuario no autenticado'], 401);
             }
 
+            // Validate all possible form fields (all nullable except 'producto_id')
             $validated = $request->validate([
                 'alto' => 'nullable|numeric|min:1',
                 'ancho' => 'nullable|numeric|min:1',
-                'design' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+                'design' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240', // 10MB max 
                 'cantidad' => 'nullable|integer|min:1',
-                'tamano' => 'nullable',
+                'tamano' => 'nullable|string',
                 'diametro' => 'nullable|numeric|min:1',
-                'cara' => 'nullable',
-                'producto_id' => 'required|exists:products,id', // Validate product exists
+                'cara' => 'nullable|string|in:una-cara,doble-cara',
+                'tipo_vinilo' => 'nullable|string|in:cortado,impreso,microperforado',
+                'detalles_extra' => 'nullable|string|max:5000',
+                'idea' => 'nullable|string|max:5000',
+                'design_choice' => 'nullable|string|in:professional,upload',
+                'professional_design' => 'nullable|boolean',
+                'producto_id' => 'required|exists:products,id', // Only required field
+                'no_cotizacion' => 'sometimes|boolean', // Optional flag for option 11
             ]);
 
+            // Handle file upload for 'design'
+            if ($request->hasFile('design')) {
+                $path = $request->file('design')->store('designs', 'public');
+                $validated['design'] = $path; // Store file path instead of file object
+            } else {
+                $validated['design'] = null;
+            }
+
+            // Prepare customization options (exclude 'producto_id' and 'no_cotizacion')
+            $customization = $validated;
+            unset($customization['producto_id']);
+            unset($customization['no_cotizacion']);
+
+            // Create the order
             $orden = Orden::create([
                 'user_id' => $user->id,
-                'producto_id' => $validated['producto_id'], // ✅ Include this here
-                'opciones_personalizacion' => json_encode($request->all()),
-                'monto' => null, // Replace with actual calculation logic later
+                'producto_id' => $validated['producto_id'],
+                'opciones_personalizacion' => json_encode($customization),
+                'monto' => null, // Replace with actual price calculation logic later
             ]);
 
 
-            return redirect()->back()->with('success', 'Correo de recibo - Exito
-            Correo de solicitud - Exito
-            Payment Bypassed');
+            if ($request->has('no_cotizacion')) {
+                // Redirect to payment processor with order ID
+                return redirect()->route('payment.process', ['orden_id' => $orden->id]);
+            } else {
+                // Send email to store with order details
+                Mail::to('store@example.com')->send(new FormatoOrden($orden));
+                // Optionally send a receipt to the user
+                // Mail::to($user->email)->send(new ReceiptEmail($orden));
+                return redirect()->back()->with('success', 'Orden creada exitosamente. Se ha enviado un correo de confirmación.');
+            }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error de lado del servidor: ' . $e->getMessage());
         }
-        // Handle file upload
-        //$designPath = $request->file('design')->store('designs', 'public');
-
-        // Create order logic here...
-
-        // Redirect with success message
     }
     public function crear(Request $request)
     {
