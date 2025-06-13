@@ -43,15 +43,11 @@ return Application::configure(basePath: dirname(__DIR__))
             '190.93.240.0/20',
             '197.234.240.0/22',
             '198.41.128.0/17',
-    ]);
-     $middleware->trustProxies(
-        at: '*',
-        headers: Request::HEADER_X_FORWARDED_FOR |
+    ],headers: Request::HEADER_X_FORWARDED_FOR |
         Request::HEADER_X_FORWARDED_HOST |
         Request::HEADER_X_FORWARDED_PORT |
         Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB
-    );
+        Request::HEADER_X_FORWARDED_AWS_ELB);
     
     })
     ->withExceptions(function (Exceptions $exceptions) {
