@@ -26,8 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureUserHasRole::class,
         ]);
         $middleware->trustProxies(at: [
-        '192.168.1.1',
-        '10.0.0.0/8',
             '103.21.244.0/22',
             '103.22.200.0/22',
             '103.31.4.0/22',
