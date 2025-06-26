@@ -2,13 +2,13 @@
 
 namespace App\Mail;
 
-use App\Models\Order; // Assuming you have an Order model
+use App\Models\Orden; 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Attachment; // Import Attachment
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
 
 class FormatoOrden extends Mailable
@@ -18,14 +18,14 @@ class FormatoOrden extends Mailable
     /**
      * The order instance.
      *
-     * @var \App\Models\Order
+     * @var \App\Models\Orden
      */
     public $order; // Declare a public property to hold the order
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Order $order) // Inject the Order model
+    public function __construct(Orden $order) // Inject the Order model
     {
         $this->order = $order; // Assign the injected order to the public property
     }
@@ -36,10 +36,7 @@ class FormatoOrden extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Order Confirmation: #' . $this->order->order_number, // Dynamic subject
-            // You can also set 'from' and 'to' here if they are static for this mailer
-            // from: new Address('noreply@yourcompany.com', 'Your Company Name'),
-            // to: $this->order->customer_email, // Assuming customer_email on order
+            subject: 'Su Confirmación de orden: #' . $this->order->order_number, 
         );
     }
 
@@ -63,12 +60,6 @@ class FormatoOrden extends Mailable
      */
     public function attachments(): array
     {
-        return [
-            // Example of attaching a PDF, assuming you have a path to it
-            // 'path/to/your/order/pdfs/order_' . $this->order->id . '.pdf',
-            Attachment::fromPath(public_path('invoices/order_' . $this->order->order_number . '.pdf'))
-                      ->as('Order_' . $this->order->order_number . '.pdf')
-                      ->withMime('application/pdf'),
-        ];
+        return [];
     }
 }

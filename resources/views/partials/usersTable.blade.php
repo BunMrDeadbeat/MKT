@@ -23,7 +23,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="ml-4"> 
+                                <div class=""> 
                                     <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div> 
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"> 
                             <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-900 action-btn"> 
+                                <button href="{{ route('admin.editUsers',$user->id) }}" class="text-yellow-600 hover:text-yellow-900 action-btn"> 
                                     <i class="fas fa-edit"></i> 
                                 </button>
                                 <button class="text-red-600 hover:text-red-900 action-btn"> 
@@ -47,14 +47,14 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No users found.</td>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No se encontraron usuarios.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    {{-- Pagination --}}
+
     <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between"> 
         <div class="text-sm text-gray-500">
             @if ($users->total() > 0)
@@ -64,7 +64,7 @@
             @endif
         </div> 
         <div class="flex space-x-1"> 
-            {{ $users->links() }} {{-- Renders pagination links automatically --}}
+            {{ $users->links() }} 
         </div>
     </div>
 </div>

@@ -117,4 +117,36 @@ document.addEventListener('DOMContentLoaded', function () {
         fileUploadSection.style.display = 'block';
         fileInput.disabled = false;
     }
+
+
+    /////////////////////////////
+     const mainImage = document.getElementById('main-image');
+    const imageOverlay = document.getElementById('image-overlay');
+    const zoomedImage = document.getElementById('img-zoomed');
+    const closeButton = document.querySelector('.close-button');
+    mainImage.addEventListener('click', function() {
+     
+        zoomedImage.src = this.src;
+     
+        imageOverlay.classList.add('visible');
+    });
+
+    closeButton.addEventListener('click', function() {
+      
+        imageOverlay.classList.remove('visible');
+    });
+
+    
+    imageOverlay.addEventListener('click', function(event) {
+        if (event.target === imageOverlay) {
+            imageOverlay.classList.remove('visible');
+        }
+    });
+
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && imageOverlay.classList.contains('visible')) {
+            imageOverlay.classList.remove('visible');
+        }
+    });
 });

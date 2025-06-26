@@ -7,6 +7,10 @@
              class="w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] object-cover object-center
                     transform transition-transform duration-500 ease-in-out hover:scale-105"> {{-- Significantly larger main image, object-cover for full fill, and a gentle zoom on hover --}}
     </div>
+    <div id="image-overlay" class="overlay">
+        <span class="close-button">&times;</span>
+        <img class="overlay-content" id="img-zoomed">
+    </div>
 
     <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4"> {{-- More flexible and expansive grid for thumbnails --}}
         @foreach($images as $index => $image)

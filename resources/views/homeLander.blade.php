@@ -9,7 +9,13 @@
                                     alert("{{ session('error') }}");
                                 </script>
                             @endif
-            <div class="bg-mktPurple min-h-3/4 p-8">
+            <div class="floating-whatsapp">
+                <a href="https://wa.me/526311260295" target="_blank"
+                    class="bg-green-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
+                    <i class="fab fa-whatsapp text-2xl"></i>
+                </a>
+            </div>
+            <div class="bg-mktPurple min-h-2/4 p-8">
                 {{-- Heroe secion --}}
                 <section id="inicio" class="banner-section rounded-3xl"
                     style="
@@ -23,8 +29,8 @@
                      background-position: center;
                       background-size:  auto;
                       background-repeat: repeat;">
-                    <div class="banner-overlay absolute inset-0"></div>
-                    <div class="relative max-w mx-auto bg-purple-900/60 rounded-3xl p-4">
+                    <div class="banner-overlay absolute inset-0 "></div>
+                    <div class="relative  mx-auto bg-purple-900/60 rounded-3xl p-4">
 
                         <div class="flex flex-col md:flex-row items-center gap-12">
 
@@ -48,7 +54,7 @@
                                     </a>
                                     <a href="#contacto"
                                         class="px-6 py-3 bg-white hover:bg-gray-100 text-mktPurple font-bold rounded-lg transition duration-300">
-                                        Contáctanos <i class="fas fa-phone-alt ml-2"></i>
+                                        Contáctanos <i class="fas fa-person-running ml-2"></i>
                                     </a>
                                     <a href="#contacto"
                                         class="px-6 py-3 bg-mktGreen hover:bg-gray-100 text-mktPurple font-bold rounded-lg transition duration-300">
@@ -151,7 +157,7 @@
 
                             <div class="mt-8">
                                 <h4 class="text-white font-medium mb-4">Síguenos en redes sociales</h4>
-                                <div class="flex space-x-4">
+                                <div class="flex-col space-x-4">
                                     <a href="https://www.facebook.com/DuranMKT" class="text-blue-500 font-semibold hover:text-mktGreen text-2xl transition duration-300 ">
                                         <i class="fab fa-facebook"> FACEBOOK</i>
                                     </a>

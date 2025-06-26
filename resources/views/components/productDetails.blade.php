@@ -1,4 +1,4 @@
-@props(['title', 'price', 'description', 'productid','options'])
+@props(['title', 'price', 'description', 'productid', 'options'])
 
 <div id="ProductDetails" class="w-full md:w-1/2">
     <h1 class="text-3xl font-bold text-primary mb-2">{{ $title }}</h1>
@@ -35,9 +35,17 @@
         <div class="flex items-center text-gray-600 mb-2">
             <i class="fas fa-truck mr-2"></i>
             <span>Los productos se recogen en local</span>
+            
+        </div>
             @if(session('success'))
                 <div class="bg-green-100 text-green-700 p-4 rounded mb-4">
                     {{ session('success') }}
+                </div>
+            @endif
+            
+            @if(session('message'))
+                <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+                    {{ session('message') }}
                 </div>
             @endif
 
@@ -50,6 +58,5 @@
                     </ul>
                 </div>
             @endif
-        </div>
     </div>
 </div>

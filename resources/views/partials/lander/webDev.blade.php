@@ -38,7 +38,7 @@
                     </ul>
                 </div>
                 <div class="px-6 pb-6">
-                    <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">
+                    <button onclick="window.location.href='https://wa.me/526311260295?text=Hola,%20tengo%20inter%C3%A9s%20en%20una%20p%C3%A1gina%20web%20personalizada.%20%C2%BFMe%20da%20m%C3%A1s%20informaci%C3%B3n%3F'" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">
                         Solicitar Presupuesto
                     </button>
                 </div>
@@ -73,7 +73,7 @@
                     </ul>
                 </div>
                 <div class="px-6 pb-6">
-                    <button class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg">
+                    <button onclick="window.location.href='https://wa.me/526311260295?text=Hola,%20me%20interesa%20incrementar%20mis%20ventas%20con%20un%20landing%20page,%20me%20da%20m%C3%A1s%20informaci%C3%B3n%3F'" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg">
                         Quiero más Ventas
                     </button>
                 </div>
@@ -108,7 +108,7 @@
                     </ul>
                 </div>
                 <div class="px-6 pb-6">
-                    <button class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">
+                    <button onclick="window.location.href='https://wa.me/526311260295?text=Hola,%20me%20interesa%20el%20servicio%20para%20una%20tienda%20en%20linea,%20%C2%BFme%20puede%20dar%20mas%20informaci%C3%B3n%3F'" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">
                         Empezar a Vender
                     </button>
                 </div>

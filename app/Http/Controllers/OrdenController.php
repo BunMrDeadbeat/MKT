@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\FormatoOrden;
 use App\Models\Orden;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class OrdenController extends Controller
 {
@@ -48,10 +50,10 @@ class OrdenController extends Controller
         try {
             $user = Auth::user();
             if (!$user) {
-                return redirect()->back()->with(['success' => false, 'message' => 'Usuario no autenticado'], 401);
+                return redirect()->back()->with(['success' => false, 'message' => 'Necesita registrarse o ingresar para realizar ésta orden'], 401);
             }
 
-            // Validate all possible form fields (all nullable except 'producto_id')
+            // Validate all the possible forma fildos (all nullable except 'producto_id')
             $validated = $request->validate([
                 'alto' => 'nullable|numeric|min:1',
                 'ancho' => 'nullable|numeric|min:1',
@@ -93,13 +95,13 @@ class OrdenController extends Controller
 
             if ($request->has('no_cotizacion')) {
                 // Redirect to payment processor with order ID
-                return redirect()->route('payment.process', ['orden_id' => $orden->id]);
+               // return redirect()->route('payment.process', ['orden_id' => $orden->id]);
             } else {
                 // Send email to store with order details
-                Mail::to('store@example.com')->send(new FormatoOrden($orden));
+                Mail::to($user->email)->send(new FormatoOrden($orden));
                 // Optionally send a receipt to the user
                 // Mail::to($user->email)->send(new ReceiptEmail($orden));
-                return redirect()->back()->with('success', 'Orden creada exitosamente. Se ha enviado un correo de confirmación.');
+                return redirect()->back()->with('success', 'Orden creada exitosamente. Se ha enviado un mensaje a su correro. Procure revisar su sección de spam');
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error de lado del servidor: ' . $e->getMessage());

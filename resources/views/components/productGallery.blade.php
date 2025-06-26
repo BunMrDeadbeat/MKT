@@ -1,12 +1,15 @@
-@props(['thumbnail','images', 'description'])
+@props(['thumbnail', 'images', 'description'])
 
 <div id="ProductGallery" class="w-full mx-auto p-4"> 
     <div class="mb-4 rounded-lg shadow-xl overflow-hidden bg-white"> 
-        <img id="main-image" src="{{asset ("/storage/$thumbnail") }}"
+        <img id="main-image" src="{{asset("/storage/$thumbnail") }}"
              alt="Imagen profesional del producto"
              class="w-full h-80 object-contain p-4 sm:h-96 md:h-120 transition-all duration-300 ease-in-out">
     </div>
-
+    <div id="image-overlay" class="overlay">
+        <span class="close-button">&times;</span>
+        <img class="overlay-content" id="img-zoomed">
+    </div>
     <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 mb-7">
         @foreach($images as $index => $image)
             <img src="{{ $image }}"

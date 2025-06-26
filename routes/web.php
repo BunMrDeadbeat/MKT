@@ -21,6 +21,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/usuarios', [UserController::class, 'loadUsers'])->name('admin.users');
+    Route::get('/usuarios/{id}', [UserController::class, 'loadUsers'])->name('admin.editUsers');
 
     Route::get('/categorias', [CategoriesController::class, 'index'])->name('admin.categories');
     Route::get('/categorias-editing', [CategoriesController::class, 'indexEditMode'])->name('admin.categories.editMode');
@@ -54,10 +55,12 @@ Route::prefix('user')->middleware(['auth', 'role:user'])->group(function () {
 });
 
 
+//activar middleware en éste
+Route::post('/ordenes/crear', [OrdenController::class, 'store'])->name('orders.store');
 
-Route::post('/ordenes/crear', [OrdenController::class, 'store'])->middleware('auth')->name('orders.store');
-
-
+Route::get('mail1',function(){
+    return view('mail.formato-orden');
+});
 
 Route::get('/', [landingController::class,'index'])->name('main');
 
