@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Mail\FormatoOrden;
+use App\Models\Cart;
+use App\Models\CartProduct;
+use App\Models\CartProductOption;
+use App\Models\Gallery;
 use App\Models\Orden;
+use App\Models\Product;
+use DB;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +51,7 @@ class OrdenController extends Controller
 
         return view('adminOrders', compact('orders'));
     }
-    public function store(Request $request)
+    public function storeLegacy(Request $request)
     {
         try {
             $user = Auth::user();
@@ -107,6 +113,81 @@ class OrdenController extends Controller
             return redirect()->back()->with('error', 'Error de lado del servidor: ' . $e->getMessage());
         }
     }
+    public function storeCart(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                DB::rollBack();
+                return redirect()->back()->with(['success' => false, 'message' => 'Necesita registrarse o ingresar para realizar ésta orden'], 401);
+            }
+
+            // Validate all the possible forma fildos (all nullable except 'producto_id')
+            $validated = $request->validate([
+                'alto' => 'nullable|numeric|min:1',
+                'ancho' => 'nullable|numeric|min:1',
+                'design' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240', // 10MB max 
+                'cantidad' => 'nullable|integer|min:1',
+                'tamano' => 'nullable|string',
+                'diametro' => 'nullable|numeric|min:1',
+                'cara' => 'nullable|string|in:una-cara,doble-cara',
+                'tipo_vinilo' => 'nullable|string|in:cortado,impreso,microperforado',
+                'detalles_extra' => 'nullable|string|max:5000',
+                'idea' => 'nullable|string|max:5000',
+                'design_choice' => 'nullable|string|in:professional,upload',
+                'professional_design' => 'nullable|boolean',
+                'producto_id' => 'required|exists:products,id', // Only required field
+                'no_cotizacion' => 'sometimes|boolean', // Optional flag for option 11
+            ]);
+        
+
+            $producto = Product::findOrFail($validated['producto_id']);
+            $cantidad = $validated['cantidad'] ?? 1;
+            
+            $carrito = Cart::firstOrCreate(['user_id' => $user->id, 'status' => 'activo']);
+
+            $productoCarrito = CartProduct::create([
+                'cart_id' => $carrito->id,
+                'product_id' => $producto->id,
+                'quantity' => $cantidad,
+                'unit_price' => $producto->price,
+            ]);
+
+
+            $opciones = $validated;
+            unset($opciones['producto_id']);
+            unset($opciones['cantidad']);
+            foreach ($opciones as $key => $value) {
+                if (!is_null($value)) {
+                    CartProductOption::create([
+                        'cart_product_id' => $productoCarrito->id,
+                        'option_name' => $key,
+                        'option_value' => $value,
+                    ]);
+                }
+            }
+
+            $carrito->total_price += $producto->price * $cantidad;
+            $carrito->save();
+
+            if ($request->hasFile('design')) { 
+                $path = $request->file('design')->store('designs', 'public');
+                $validated['design'] = $path; // Store file path instead of file object
+            } else {
+                $validated['design'] = null;
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Se añadió al carrito con éxito.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error de lado del servidor: ' . $e->getMessage());
+        }
+        
+        
+    }
     public function crear(Request $request)
     {
         dd($request->all());
@@ -126,5 +207,37 @@ class OrdenController extends Controller
         ]);
 
         return response()->json(['success' => true, 'orden' => $orden]);
+    }
+    public function obtenerCantidadTotalProductos()
+    {
+        $user = Auth::user();
+        $carrito = Cart::where('user_id', $user->id)->where('status', 'activo')->first();
+
+        $totalCantidad = 0;
+        if ($carrito) {
+            // Asumiendo que la relación se llama 'productos' y tiene el campo 'cantidad'
+            $totalCantidad = $carrito->productos->sum('cantidad');
+        }
+        // $totalCantidad ahora contiene la suma total de productos en el carrito del usuario
+    }
+
+    public function loadCart($carritoId)
+    {
+        $carrito = Cart::where('id', $carritoId)
+        ->with(['productos.producto.featuredImage'])
+        ->first();
+   
+
+        if (!$carrito) {
+            return response()->json(['success' => false, 'message' => 'Carrito no encontrado'], 404);
+        }
+        // $cartItems = $carrito->productos->map(function ($cartItem) {
+        //     $cartItem->opciones = json_decode($cartItem->opciones, true);
+        //     return $cartItem;
+        // })->load(['producto', 'opciones']);
+        return view('Carrito', [
+            'cart' => $carrito,
+            'cartItems' => $carrito->productos->load(['producto', 'opciones' ]),
+        ]);
     }
 }

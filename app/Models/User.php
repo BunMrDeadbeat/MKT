@@ -69,4 +69,14 @@ class User extends Authenticatable
     {
         return $this->roles->whereIn('name', $roles)->isNotEmpty();
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class, 'user_id');
+    }
 }

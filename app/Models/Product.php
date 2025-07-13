@@ -34,7 +34,10 @@ class Product extends Model
     {
         return $this->hasMany(Gallery::class);
     }
-
+  public function featuredImage()
+    {
+        return $this->hasOne(Gallery::class)->where('is_featured', true);
+    }
     public function getFeaturedImageAttribute()
     {
         $gallery = $this->galleries->firstWhere('is_featured', true);

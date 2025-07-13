@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class CartProduct extends Model
 {
-    protected $fillable = ['carrito_id', 'product_id', 'cantidad'];
+    protected $table = 'carts_products';
+    protected $fillable = ['cart_id', 'product_id', 'quantity', 'unit_price'];
 
-    public function carrito()
+    public function cart()
     {
         return $this->belongsTo(Cart::class);
     }
@@ -20,6 +21,9 @@ class CartProduct extends Model
 
     public function producto()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+    public function count(){
+        return $this->hasMany(Product::class)->count();
     }
 }

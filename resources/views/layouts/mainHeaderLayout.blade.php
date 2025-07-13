@@ -12,8 +12,13 @@
                     <a href="#inicio" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });"
                         class="text-gray-300 hover:text-white transition text-lg font-bold rounded-sm px-2 bg-green-900">Inicio</a>
                     <a href="{{ '/store' }}" class="text-gray-300 hover:text-white transition text-lg font-bold rounded-sm px-2 bg-purple-900">Tienda</a>
-                    <a href="{{ '/admin' }}" class="text-gray-300 hover:text-white transition text-lg font-bold rounded-sm px-2 bg-green-900">Admin</a>
-                    <a href="{{route( 'user.dash') }}" class="text-gray-300 hover:text-white transition text-lg font-bold rounded-sm px-2 bg-indigo-900">  {{ auth()->check() ? auth()->user()->name : '' }}</a>
+                    
+                    @auth
+                        @if (auth()->user()->roles->first()->id === 1)
+                        <a href="{{ '/admin' }}" class="text-gray-300 hover:text-white transition text-lg font-bold rounded-sm px-2 bg-green-900">Admin</a>
+                        @endif
+                        <a href="{{route( 'user.dash') }}" class="text-gray-300 hover:text-white transition text-lg font-bold rounded-sm px-2 bg-indigo-900">  {{ auth()->check() ? auth()->user()->name : '' }}</a>  
+                    @endauth
                 </div>
             </div>
             <div> 

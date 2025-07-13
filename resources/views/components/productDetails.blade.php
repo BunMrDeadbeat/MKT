@@ -17,16 +17,27 @@
     
     <h3 class=" font-bold text-2xl">Opciones para personalización:</h3>
     {{-- @include('partials.customizationOptions') --}}
-    <form id="customizationForm" action="{{ route('orders.store') }}" method="POST" enctype="multipart/form-data">
+    <form id="customizationForm" action="" method="POST" enctype="multipart/form-data">
         @csrf
         @include('partials.customizationOptions')
 
         <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <button id="buyButton" type="submit"
+            {{-- Button 1: Submits to the 'orders.buyNow' route --}}
+        <button type="submit"
+                formaction="{{ route('orders.store') }}"
                 class="bg-primary hover:bg-purple-800 text-white py-3 px-6 rounded-lg font-bold flex-1 flex items-center justify-center space-x-2">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Comprar</span>
-            </button>
+            <span>Ordenar ya</span>
+        </button>
+        
+        {{-- Button 2: Submits to the 'cart.add' route --}}
+        <button type="submit"
+                formaction="{{ route('orders.storeCart') }}"
+                class="bg-green-700 hover:bg-mktGreen text-white py-3 px-6 rounded-lg font-bold flex-1 flex items-center justify-center space-x-2">
+                
+            <i class="fas fa-shopping-cart"></i>
+            <span>Agregar al carrito</span>
+        </button>
+
         </div>
     </form>
 

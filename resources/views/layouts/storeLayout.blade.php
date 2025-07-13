@@ -2,9 +2,9 @@
 @section('title', 'DurankMKT | Store')
 @section('description', 'Tienda DuranMkt')
 @section('LayoutBody')
-        <header class="bg-primary text-white shadow-md">
+        <header class="bg-primary text-white shadow-md sticky top-0 z-50">
             <div class="container mx-auto px-3 py-4">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center m-0.5">
                     <div class="flex items-center space-x-4">
                         <a  href="{{ url('/')}}" >
                             <i class="fas fa-house"></i>
@@ -14,21 +14,41 @@
                             <i class="fas fa-store"></i>
                             <span>Tienda</span> 
                         </a>
-                        <div class="flex items-center space-x-1">
+                        <div class="hidden md:flex items-center space-x-1">
                             <i class="fas fa-power-off text-mktGreen text-2xl sm:hidden"></i>
                             <h1 class="text-2xl font-bold">DURAN<span class="text-mktGreen">MKT</span><span class="text-sm"> store</h1>
                         </div>
                     </div>
-                    <nav class="hidden md:flex space-x-6 items-center">
-                        <a href="{{route('user.dash') }}" class="hover:text-accent"><i class="fas fa-user"></i></a>
-                        <a href="#" class="flex items-center space-x-1 hover:text-accent">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Carrito (COMING SOON)</span>
-                        </a>
+                    
+                    <nav class="flex md:space-x-6 items-center">
+                        @auth
+                            <a href="{{route('user.dash') }}" class="hover:text-accent"><i class="fas fa-user"></i>
+                            <span>{{ auth()->user()->name }}</span>
+                            </a>
+                         @if(auth()->user()->cart)
+
+                            <a href="{{ route('cart.load', ['carritoId' => auth()->user()->cart->id]) }}" class="flex items-center space-x-1 hover:text-accent">
+                               <i class="fas fa-shopping-cart"></i>
+                               <span>Carrito ({{ auth()->user()->cart->countItems() ?? 0 }})</span>
+                            </a>
+                         @else
+                            <a href="#" class="flex items-center space-x-1 hover:text-accent">
+                               <i class="fas fa-shopping-cart"></i>
+                               <span>Carrito (0)</span>
+                            </a>
+                         @endif
+                        @else
+                            
+                            <a href="{{route('login') }}" class="hover:text-accent"><i class="fas fa-user"></i>
+                            <span>login</span>
+                            </a>
+                            <a href="{{route('login') }}" class="flex items-center space-x-1 hover:text-accent">
+                               <i class="fas fa-shopping-cart"></i>
+                               <span>Carrito (0)</span>
+                            </a>
+                        @endauth
+                        
                     </nav>
-                    <button class="md:hidden text-xl">
-                        <i class="fas fa-bars"></i>
-                    </button>
                 </div>
             </div>
         </header>
@@ -47,14 +67,14 @@
                             <a href="#" class="hover:text-accent"><i class="fab fa-twitter"></i></a>
                         </div>
                     </div>
-                    
+
                         @if (isset($productos))
                     <div>
-                        
+
                         <h4 class="font-bold mb-4 text-accent">Productos</h4>
                         <ul class="space-y-2">
                                 @php
-                                    $productosFiltrados = $productos->where('type', 'product');
+    $productosFiltrados = $productos->where('type', 'product');
                                 @endphp
                                 @if($productosFiltrados->count() >= 4)
                                     @foreach($productosFiltrados->random(4) as $producto)
@@ -63,7 +83,7 @@
                                 @else
                                     <li><span class="text-gray-500">Disponibles en contacto.</span></li>
                                 @endif
-                            
+
 
                         </ul>
                     </div>
@@ -71,7 +91,7 @@
                         <h4 class="font-bold mb-4 text-accent">Servicios</h4>
                         <ul class="space-y-2">
                             @php
-                            $productosFiltrados = $productos->where('type', 'service');
+    $productosFiltrados = $productos->where('type', 'service');
                             @endphp
                             @if($productosFiltrados->count() >= 4)
                                 @foreach($productosFiltrados->random(4) as $producto)
