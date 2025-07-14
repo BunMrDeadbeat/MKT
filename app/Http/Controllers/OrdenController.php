@@ -151,13 +151,26 @@ class OrdenController extends Controller
                 'cart_id' => $carrito->id,
                 'product_id' => $producto->id,
                 'quantity' => $cantidad,
-                'unit_price' => $producto->price,
+                'unit_price' => $producto->price??0,
             ]);
 
 
             $opciones = $validated;
             unset($opciones['producto_id']);
             unset($opciones['cantidad']);
+
+            if ($request->hasFile('design')) { 
+                $path = $request->file('design')->store('designs', 'public');
+                $validated['design'] = $path; // Store file path instead of file object
+                if($opciones['design']){
+                $opciones['design'] = $path;
+                }
+                
+            } else {
+                $validated['design'] = null;
+            }
+
+            
             foreach ($opciones as $key => $value) {
                 if (!is_null($value)) {
                     CartProductOption::create([
@@ -171,12 +184,7 @@ class OrdenController extends Controller
             $carrito->total_price += $producto->price * $cantidad;
             $carrito->save();
 
-            if ($request->hasFile('design')) { 
-                $path = $request->file('design')->store('designs', 'public');
-                $validated['design'] = $path; // Store file path instead of file object
-            } else {
-                $validated['design'] = null;
-            }
+            
 
             DB::commit();
 
@@ -231,10 +239,15 @@ class OrdenController extends Controller
         if (!$carrito) {
             return response()->json(['success' => false, 'message' => 'Carrito no encontrado'], 404);
         }
-        // $cartItems = $carrito->productos->map(function ($cartItem) {
-        //     $cartItem->opciones = json_decode($cartItem->opciones, true);
-        //     return $cartItem;
-        // })->load(['producto', 'opciones']);
+
+        foreach ($carrito->productos as $producto) {
+            // Decodificar las opciones JSON
+            if($producto->producto->price!=null && $producto->unit_price != $producto->producto->price){
+                $producto->unit_price = $producto->producto->price;
+                $producto->save();
+            }
+            
+        }
         return view('Carrito', [
             'cart' => $carrito,
             'cartItems' => $carrito->productos->load(['producto', 'opciones' ]),

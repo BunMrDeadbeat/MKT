@@ -5,7 +5,7 @@
     
     <div class="cart-items-container max-h-[500px] overflow-y-auto">
         @foreach($cartItems as $item)
-        |{{$item->opciones}}|
+        |{{$item}}|
             @include('partials.cart.cart-item', ['item' => $item])
         @endforeach
     </div>

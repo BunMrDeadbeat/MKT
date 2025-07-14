@@ -45,13 +45,13 @@
             <div class="mt-2 sm:mt-0">
                 
 
-                @if(true || $item->producto->price == 0.0)
+                @if($item->producto->price == 0.00)
                 <div class="flex flex-col items-end">
                     <span class="text-md font-semibold text-gray-800 ml-2">Costo final pendiente</span>
                     <span class="text-sm font-regular text-gray-800 ml-2">Nos contactaremos al revisar su solicitud</span>
                 </div>
                 @else
-                    <span class="text-lg font-semibold text-gray-800">${{ number_format($item->price, 2) }}</span>
+                    <span class="text-lg font-semibold text-gray-800">${{ number_format($item->producto->price, 2) }}</span>
                 @endif
                 
                 

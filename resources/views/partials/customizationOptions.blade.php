@@ -172,6 +172,9 @@ $hasOption11 = in_array('11', $optionIds);
                 @endforeach
                 @if ($hasOption11)
                     <input type="hidden" name="no_cotizacion" value="1">
+
+                    @else
+                    <input type="hidden" name="no_cotizacion" value="0">
                 @endif
             </div>
         </div>

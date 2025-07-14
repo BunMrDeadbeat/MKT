@@ -29,7 +29,10 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-
+     public function cartsProducts()
+    {
+        return $this->hasMany(CartProduct::class, 'product_id');
+    }
     public function galleries()
     {
         return $this->hasMany(Gallery::class);
@@ -48,7 +51,7 @@ class Product extends Model
     {
         parent::boot();
 
-        static::deleting(function ($product) {
+        static::deleted(function ($product) {
             // carga todas las galerías relacionadas al producto que estas eliminando pedazo de babozo y elimina sus imágenes
             $product->galleries()->chunkById(200, function ($galleries) {
                 foreach ($galleries as $gallery) {
