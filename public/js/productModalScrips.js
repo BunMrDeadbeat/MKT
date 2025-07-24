@@ -20,7 +20,21 @@ function toggleOptionsSection(mode) {
 }
 
 
+    function toggleRequired(optionId) {
+        const optionCheckbox = document.getElementById(`edit-option-${optionId}`);
+        const requiredToggle = document.getElementById(`required-toggle-${optionId}`);
+        const requiredSection = document.getElementById(`required-section-${optionId}`);
 
+        if (optionCheckbox.checked) {
+            requiredToggle.disabled = false;
+            requiredSection.classList.remove('opacity-50');
+        } else {
+            requiredToggle.disabled = true;
+            requiredSection.classList.add('opacity-50');
+        }
+    }
+
+            
 
 
 function addOptionValue(optionId) {

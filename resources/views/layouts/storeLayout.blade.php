@@ -27,7 +27,7 @@
                             </a>
                          @if(auth()->user()->cart)
 
-                            <a href="{{ route('cart.load', ['carritoId' => auth()->user()->cart->id]) }}" class="flex items-center space-x-1 hover:text-accent">
+                            <a href="{{ route('cart.load', ['userId' => auth()->user()->id]) }}" class="flex items-center space-x-1 hover:text-accent">
                                <i class="fas fa-shopping-cart"></i>
                                <span>Carrito ({{ auth()->user()->cart->countItems() ?? 0 }})</span>
                             </a>

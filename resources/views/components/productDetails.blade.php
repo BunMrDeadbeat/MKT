@@ -13,7 +13,34 @@
             Nosotros te cotizaremos!
         @endif
     </div>
+     <div class="border-t border-gray-200 pt-4">
+        <div class="flex items-center text-gray-600 mb-2">
+            <i class="fas fa-truck mr-2"></i>
+            <span>Los productos se recogen en local</span>
+            
+        </div>
+            @if(session('success'))
+                <div class="bg-green-100 text-green-700 p-4 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            @if(session('message'))
+                <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+                    {{ session('message') }}
+                </div>
+            @endif
 
+            @if($errors->any())
+                <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+    </div>
     
     <h3 class=" font-bold text-2xl">Opciones para personalización:</h3>
     {{-- @include('partials.customizationOptions') --}}
@@ -42,32 +69,5 @@
     </form>
 
 
-    <div class="border-t border-gray-200 pt-4">
-        <div class="flex items-center text-gray-600 mb-2">
-            <i class="fas fa-truck mr-2"></i>
-            <span>Los productos se recogen en local</span>
-            
-        </div>
-            @if(session('success'))
-                <div class="bg-green-100 text-green-700 p-4 rounded mb-4">
-                    {{ session('success') }}
-                </div>
-            @endif
-            
-            @if(session('message'))
-                <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-                    {{ session('message') }}
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-    </div>
+   
 </div>

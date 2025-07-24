@@ -49,55 +49,14 @@ Route::get('/store', [ProductController::class,'loadStore'])->name('store.main')
 Route::get('/products/filter/{categoryId}', [ProductController::class, 'filterByCategory'])->name('products.filter');
 
 Route::get('/store/{categoryId}', [ProductController::class, 'loadStoreFiltered'])->name('store.filtered');
-Route::get('/carrito/dummytest', function(){
-    $cartItems = new Collection([
-    (object)[
-        'id' => 1,
-        'name' => 'Auriculares Bluetooth Inalámbricos',
-        'image_url' => 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-        'price' => 129.99,
-        'quantity' => 1,
-    ],
-    (object)[
-        'id' => 2,
-        'name' => 'Teclado Mecánico RGB',
-        'image_url' => 'https://images.unsplash.com/photo-1618384887924-c94de1425411?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-        'price' => 89.50,
-        'quantity' => 2,
-    ],
-    (object)[
-        'id' => 3,
-        'name' => 'Ratón Ergonómico Vertical',
-        'image_url' => 'https://images.unsplash.com/photo-1615664739589-13d865dcf133?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-        'price' => null,
-        'quantity' => 1,
-    ],
-]);
 
+Route::prefix('carrito')->middleware(['auth'])->group(function (){
 
-// 2. Calcular los datos para el resumen del pedido ($summaryDetails)
-$subtotal = $cartItems->sum(function ($item) {
-    return $item->price * $item->quantity;
+    Route::get('/', [OrdenController::class, 'loadCart'])->name('cart.load');
+    Route::delete('/items/{cartProduct}', [OrdenController::class, 'destroyCartProduct'])->name('cart.item.destroy');
+    Route::patch('/items/{cartProduct}', [OrdenController::class, 'update'])->name('cart.item.update');
 });
 
-// Puedes agregar lógica para impuestos, envío, etc. aquí.
-$shipping = 15.00;
-$taxRate = 0.16; // 16% de IVA
-$taxes = $subtotal * $taxRate;
-$total = $subtotal + $taxes + $shipping;
-
-$summaryDetails = (object)[
-    'subtotal' => $subtotal,
-    'shipping' => $shipping,
-    'taxes' => $taxes,
-    'total' => $total,
-];
-    return view('Carrito', [
-        'cartItems' => $cartItems,
-        'summaryDetails' => $summaryDetails
-    ]);
-})->name('store.filtered');
-Route::get('/carrito/{carritoId}',[OrdenController::class, 'loadCart'])->name('cart.load');
 
 Route::prefix('user')->middleware(['auth', 'role:user'])->group(function () {
 

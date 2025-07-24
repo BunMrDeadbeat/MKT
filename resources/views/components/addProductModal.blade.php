@@ -86,17 +86,29 @@
                                             <p class="text-sm text-gray-600 mb-3">Selecciona las opciones que podrán ser aplicadas al producto:</p>
                                             <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 @foreach($options as $option)
-                                                    <div class="option-item">
+                                                {{-- awdnlanwdlqfkiuhawfhui --}}
+                                                    <div class="option-item p-3 border-b"> 
                                                         <input type="checkbox" id="option-{{ $option->id }}" class="option-input" name="selected_options[]"
-                                                            value="{{ $option->id }}">
+                                                            value="{{ $option->id }}" onchange="toggleRequired({{ $option->id }})">
                                                         <label for="option-{{ $option->id }}" class="option-label">
                                                             <div>
                                                                 <span>{{ $option->name }}</span>
                                                                 <p class="text-xs text-gray-500 mt-1">{{ $option->description }}</p>
                                                             </div>
-                                                            <span class="option-badge">Opcional</span>
                                                         </label>
                                                     </div>
+                                                    {{-- <div id="required-section-{{ $option->id }}" class="flex items-center space-x-2 mt-3">
+                                                            <span class="text-sm font-medium text-gray-700">Obligatorio?</span>
+                                                            
+                                                            <input type="hidden" name="required_status[{{ $option->id }}]" value="0">
+                                                            
+                                                            <label for="required-toggle-{{ $option->id }}" class="relative inline-flex items-center cursor-pointer">
+                                                                <input type="checkbox" id="required-toggle-{{ $option->id }}" 
+                                                                    name="required_status[{{ $option->id }}]" value="1" class="sr-only peer" checked>
+
+                                                                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                                                            </label>
+                                                    </div> --}}
                                                 @endforeach
                                             </div>
                                         </div>

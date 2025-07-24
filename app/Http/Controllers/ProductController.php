@@ -19,7 +19,12 @@ class ProductController extends Controller
     {
         
         $product = Product::where('slug', $slug)
-            ->with(['category', 'galleries', 'options'])
+            ->with(['category',
+             'galleries',
+              'options'=> function($query) {
+                $query->orderBy('id', 'asc'); // id ascendente para mantener el orden en la vista
+            }
+              ])
             ->firstOrFail();
         if ($product->status !== 'active') {
             abort(404);
@@ -168,6 +173,8 @@ class ProductController extends Controller
             'delete_gallery.*' => 'nullable|integer',
             'selected_options' => 'nullable|array',
             'selected_options.*' => 'integer|exists:options,id',
+            'required_status' => 'nullable|array',
+            'required_status.*' => 'boolean',
         ]);
 
         try {
@@ -201,11 +208,19 @@ class ProductController extends Controller
                 $product->galleries()->whereIn('id', $deleteGalleryIds)->delete();
             }
         
-            $options = [];
-            foreach ($request->input('selected_options', []) as $optionId) {
-                $options[$optionId] = ['required' => false, 'values' => json_encode([])];
+            $optionsToSync = [];
+            $selectedOptionIds = $request->input('selected_options', []);
+            $requiredStatuses = $request->input('required_status', []); 
+
+            foreach ($selectedOptionIds as $optionId) {
+                $isRequired = (int) ($requiredStatuses[$optionId] ?? 0); 
+                $optionsToSync[$optionId] = [
+                    'required' => $isRequired
+                ];
             }
-            $product->options()->sync($options);
+            $product->options()->sync($optionsToSync);
+
+
              return redirect()->route('admin.products')->with('success', 'Producto o servicio actualizado satisfactoriamente 😀');
         }
         catch (\Exception $e) {

@@ -5,12 +5,13 @@
             @php
 $optionIds = $options->pluck('id')->toArray();
 $hasOption2 = in_array('2', $optionIds);
-$hasOption4 = in_array('4', $optionIds);
+$hasOption3 = in_array('3', $optionIds);
 $hasOption10 = in_array('10', $optionIds);
 $hasOption11 = in_array('11', $optionIds);
             @endphp
             <div id=check>
                 @foreach ($options as $option)
+
                     @if ($option->id == '1')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño cuadrado (en metros)</label>
@@ -25,10 +26,11 @@ $hasOption11 = in_array('11', $optionIds);
                             </div>
                         </div>
                     @endif
+
                     @if ($option->id == '2')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md" id="design-section">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Diseño</label>
-                            @if ($hasOption4)
+                            @if ($hasOption3)
                                 <!-- Both options 2 and 4 are present: use radio buttons -->
                                 <div class="space-y-2">
                                     <label class="inline-flex items-center">
@@ -38,7 +40,7 @@ $hasOption11 = in_array('11', $optionIds);
                                     </label>
                                     <div id="idea-input" class="mt-2 border-2 p-2 rounded-sm">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">¿Qué tiene en mente?</label>
-                                        <textarea name="idea" id="idea-textarea"
+                                        <textarea name="idea" id="idea-textarea" placeholder="Quiero un diseño que incluya..."
                                             class="w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
                                             rows="3"></textarea>
                                     </div>
@@ -62,17 +64,18 @@ $hasOption11 = in_array('11', $optionIds);
                             @endif
                         </div>
                     @endif
-                    @if ($option->id == '3')
+
+                    @if ($option->id == '4')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
                             <div class="w-full">
-                            <input type="number" name="cantidad"
-                                class="form-input block w-50 rounded-md border-gray-300 border-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                min="1" value="1">
+                            <input type="text" name="cantidad" value="1"
+                                class="form-input block w-50 rounded-md border-gray-300 border-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
                             </div>
                         </div>
                     @endif
-                    @if ($option->id == '4')
+
+                    @if ($option->id == '3')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md" id="file-upload-section">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Diseño</label>
                             <div id="file-upload-container"
@@ -87,7 +90,7 @@ $hasOption11 = in_array('11', $optionIds);
                                 </div>
                             </div>
                              <div id="thumb-file-size-error" class="border-l-4 show bg-red-100 border-red-500 text-red-700"></div>
-                               
+
                             <div id="image-preview" class="mt-4 hidden">
                                 <img id="preview-img" src="" alt="Image Preview" class="max-w-full h-auto rounded-md">
                             </div>
@@ -96,6 +99,7 @@ $hasOption11 = in_array('11', $optionIds);
                             <input type="hidden" name="design_choice" value="upload">
                         @endif
                     @endif
+
                     @if ($option->id == '5' && !$hasOption11)
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de vinilo</label>
@@ -108,6 +112,7 @@ $hasOption11 = in_array('11', $optionIds);
                             </select>
                         </div>
                     @endif
+
                     @if ($option->id == '6')
 
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
@@ -118,6 +123,7 @@ $hasOption11 = in_array('11', $optionIds);
                         </div>
 
                     @endif
+
                     @if ($option->id == '7')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño</label>
@@ -130,10 +136,38 @@ $hasOption11 = in_array('11', $optionIds);
                             </select>
                         </div>
                     @endif
-                    @if ($option->id == '8')
 
+                    @if ($option->id == '8')
+                        <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                            <div class="flex flex-wrap gap-3 mt-2">
+                                @php
+                                    $colors = [
+                                        'negro' => '#000000',
+                                        'blanco' => '#FFFFFF',
+                                        'rojo' => '#FF0000',
+                                        'verde' => '#008000',
+                                        'azul' => '#0000FF',
+                                        'amarillo' => '#FFFF00',
+                                        'naranja' => '#FFA500',
+                                        'morado' => '#800080',
+                                        'gris' => '#808080',
+                                    ];
+                                @endphp
+                                @foreach ($colors as $name => $hex)
+                                    <div>
+                                        <input type="radio" name="color" id="color-{{ $name }}" value="{{ $name }}" class="sr-only peer">
+                                        <label for="color-{{ $name }}"
+                                            class="block w-8 h-8 rounded-full cursor-pointer border-2 {{ $name === 'blanco' ? 'border-gray-400' : 'border-transparent' }} peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-indigo-500"
+                                            style="background-color: {{ $hex }};" title="{{ ucfirst($name) }}">
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
                     @if ($option->id == '9')
+
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Cara</label>
                             <select name="cara"
@@ -144,6 +178,7 @@ $hasOption11 = in_array('11', $optionIds);
                             </select>
                         </div>
                     @endif
+
                     @if ($option->id == '10')
                     @if (!$hasOption11)
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">

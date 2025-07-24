@@ -14,6 +14,7 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class OrdenController extends Controller
 {
@@ -133,14 +134,28 @@ class OrdenController extends Controller
                 'diametro' => 'nullable|numeric|min:1',
                 'cara' => 'nullable|string|in:una-cara,doble-cara',
                 'tipo_vinilo' => 'nullable|string|in:cortado,impreso,microperforado',
+                'color' => 'nullable|string|max:100',
                 'detalles_extra' => 'nullable|string|max:5000',
                 'idea' => 'nullable|string|max:5000',
                 'design_choice' => 'nullable|string|in:professional,upload',
                 'professional_design' => 'nullable|boolean',
                 'producto_id' => 'required|exists:products,id', // Only required field
                 'no_cotizacion' => 'sometimes|boolean', // Optional flag for option 11
+            ],
+            [
+                'alto.numeric' => 'El alto debe ser un número válido.',
+                'alto.min' => 'El alto debe ser al menos 1 metro.',
+                'ancho.numeric' => 'El ancho debe ser un número válido.',
+                'ancho.min' => 'El ancho debe ser al menos 1 metro.',
+                'diametro.numeric' => 'El diámetro debe ser un número válido.',
+                'diametro.min' => 'El diámetro debe ser al menos 1 centímetro.',
+                'tamano.string' => 'El tamaño debe ser una cadena de texto.',
+                'cantidad.integer' => 'La cantidad debe ser un número entero.',
+                'cantidad.min' => 'La cantidad debe ser al menos 1.',
+                'design.mimes' => 'El archivo de diseño debe ser un archivo de imagen valido.',
+                'design.max' => 'El archivo de diseño no puede exceder los 10 MB.',
             ]);
-        
+            
 
             $producto = Product::findOrFail($validated['producto_id']);
             $cantidad = $validated['cantidad'] ?? 1;
@@ -191,7 +206,7 @@ class OrdenController extends Controller
             return redirect()->back()->with('success', 'Se añadió al carrito con éxito.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error de lado del servidor: ' . $e->getMessage());
+            return redirect()->back()->with('message', 'Hay un problema: ' . $e->getMessage());
         }
         
         
@@ -229,9 +244,11 @@ class OrdenController extends Controller
         // $totalCantidad ahora contiene la suma total de productos en el carrito del usuario
     }
 
-    public function loadCart($carritoId)
+    public function loadCart()
     {
-        $carrito = Cart::where('id', $carritoId)
+        $user =auth()->user();
+        $userId = $user->id;
+        $carrito = Cart::where('user_id', $userId)
         ->with(['productos.producto.featuredImage'])
         ->first();
    
@@ -251,6 +268,68 @@ class OrdenController extends Controller
         return view('Carrito', [
             'cart' => $carrito,
             'cartItems' => $carrito->productos->load(['producto', 'opciones' ]),
+        ]);
+    }
+    public function destroyCartProduct(CartProduct $cartProduct)
+    {
+        DB::beginTransaction();
+
+        try{
+            $designOption = $cartProduct->opciones()->where('option_name', 'design')->first();
+            $designPath = $designOption ? $designOption->option_value : null;
+            
+
+            if ($designPath) {
+                Storage::disk('public')->delete($designPath);
+            }
+            
+            $cart = $cartProduct->cart;
+            $cart->total_price -= $cartProduct->producto->price * $cartProduct->quantity;
+            $cartProduct->delete();
+            $cart->save();
+            DB::commit();
+
+            return response()->json([
+            'success' => true,
+            'message' => 'artículo eliminado del carrito con éxito.',
+            'newCount' => $cart->countItems(), 
+            'newSubtotal' => number_format($cart->total_price, 2)
+            ]);
+        }
+        catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'success' => false,
+            'message' => 'Hubo un problema al eliminar el artículo: ' . $e->getMessage(),
+        ], 500); 
+    }
+    }
+
+    public function update(Request $request, CartProduct $cartProduct)
+    {
+        
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $previousQuantity = $cartProduct->quantity;
+        $cart = $cartProduct->cart;
+        $cart->total_price -= $cartProduct->producto->price * $previousQuantity;
+
+        $cartProduct->update([
+            'quantity' => $validated['quantity']
+        ]);
+
+        $cart->total_price += $cartProduct->producto->price * $cartProduct->quantity;
+        $cart->save();
+        $cart->refresh();
+
+        // Devuelve los nuevos totales para actualizar la interfaz
+        return response()->json([
+            'success' => true,
+            'newCount' => $cart->countItems(),
+            'newSubtotal' => number_format($cart->total_price, 2),
+            'newItemPrice' => number_format($cartProduct->unit_price * $cartProduct->quantity, 2)
         ]);
     }
 }

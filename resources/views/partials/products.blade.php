@@ -48,6 +48,7 @@
     </div>
 
     <!-- Product Modal -->
+    
     @include('components.addProductModal')
 
     <!-- Category Modal -->

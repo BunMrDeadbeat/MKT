@@ -21,7 +21,7 @@ class options_seeder extends Seeder
 
          'name' => 'Tamaño Cuadrado Personalizado',
 
-         'description' => 'Define las dimensiones exactas para tu diseño cuadrado (ej: 10x10m, 15x15m).',
+         'description' => 'Para definir las dimensiones exactas para un producto en metros cuadrados (ej: 10x10m, 15x15m).',
 
          'is_active' => true,
 
@@ -33,7 +33,7 @@ class options_seeder extends Seeder
 
          'name' => 'Servicio de Diseño Gráfico Profesional',
 
-         'description' => 'Nuestro equipo de diseñadores creará una propuesta visual impactante para ti.',
+         'description' => 'Para señalar si el usuario desea un diseño gráfico profesional para su producto.',
 
          'is_active' => true,
 
@@ -43,9 +43,9 @@ class options_seeder extends Seeder
 
          'id' => 3,
 
-         'name' => 'Definir Cantidad',
+         'name' => 'Subir Diseño existente',
 
-         'description' => 'Especifica el número de unidades que deseas producir o imprimir.',
+         'description' => 'Permite a los usuarios cargar un diseño que ya han creado previamente.',
 
          'is_active' => true,
 
@@ -55,13 +55,14 @@ class options_seeder extends Seeder
 
          'id' => 4,
 
-         'name' => 'Mockup Digital Previo',
+         'name' => 'Definir Cantidad',
 
-         'description' => 'Solicita una representación digital de cómo se verá tu producto final antes de la producción.',
+         'description' => 'Especifica el número de unidades que se desean producir o imprimir.',
 
          'is_active' => true,
 
        ],
+
 
        [
 
@@ -81,7 +82,7 @@ class options_seeder extends Seeder
 
          'name' => 'Tamaño Circular Personalizado',
 
-         'description' => 'Indica el diámetro deseado para tus artículos de forma circular (ej: 8cm, 12cm).',
+         'description' => 'Indica el diámetro deseado para los artículos de forma circular en centímetros (ej: 8cm, 12cm).',
 
          'is_active' => true,
 
@@ -93,7 +94,7 @@ class options_seeder extends Seeder
 
          'name' => 'Elegir Tamaño Predefinido',
 
-         'description' => 'Selecciona entre una variedad de tamaños estándar populares para agilizar el proceso.',
+         'description' => 'Seleccionar entre una variedad de tamaños estándar.',
 
          'is_active' => true,
 
@@ -117,7 +118,7 @@ class options_seeder extends Seeder
 
          'name' => 'Impresión a una o dos caras',
 
-         'description' => 'Indica si tu diseño requiere impresión en solo un lado o en ambos lados del material.',
+         'description' => 'Indica si el diseño requiere impresión en solo un lado o en ambos lados del material.',
 
          'is_active' => true,
 
@@ -129,7 +130,7 @@ class options_seeder extends Seeder
 
          'name' => 'Detalles de la Solicitud',
 
-         'description' => 'Proporciona cualquier instrucción adicional o especificación particular para tu pedido.',
+         'description' => 'Proporciona cualquier instrucción adicional o especificación particular para el pedido.',
 
          'is_active' => true,
 
@@ -139,9 +140,9 @@ class options_seeder extends Seeder
 
          'id' => 11,
 
-         'name' => 'Revisión de Cotización',
+         'name' => 'Revisar y cotizar antes de pago',
 
-         'description' => 'Opción para revisar y confirmar los detalles de la cotización antes de finalizar.',
+         'description' => 'Desactivar ésta opción si se desea activar pagos directos para el pedido y saltar el proceso de revisión y cotización.',
 
          'is_active' => true,
 

@@ -88,7 +88,7 @@
                                         <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                                             <p class="text-sm text-gray-600 mb-3">Selecciona las opciones que podrán ser aplicadas al producto:</p>
                                             <div id="edit-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                @foreach($options as $option)
+                                                {{-- @foreach($options as $option)
                                                     <div class="option-item">
                                                         <input type="checkbox" id="edit-option-{{ $option->id }}" class="option-input" name="selected_options[]"
                                                             value="{{ $option->id }}" {{ in_array($option->id, $editProduct->options->pluck('id')->toArray()) ? 'checked' : '' }}>
@@ -97,8 +97,37 @@
                                                                 <span>{{ $option->name }}</span>
                                                                 <p class="text-xs text-gray-500 mt-1">{{ $option->description }}</p>
                                                             </div>
-                                                            <span class="option-badge">Opcional</span>
                                                         </label>
+                                                    </div>
+                                                @endforeach --}}
+                                                @foreach($options as $option)
+                                                    <div class="option-item p-3 border-b">
+                                                        <div class="flex-grow">
+                                                            <input type="checkbox" id="edit-option-{{ $option->id }}" class="option-input" name="selected_options[]"
+                                                                value="{{ $option->id }}" {{ in_array($option->id, $editProduct->options->pluck('id')->toArray()) ? 'checked' : '' }}
+                                                                onchange="toggleRequired({{ $option->id }})">
+                                                            <label for="edit-option-{{ $option->id }}" class="option-label">
+                                                                <div>
+                                                                    <span>{{ $option->name }}</span>
+                                                                    <p class="text-xs text-gray-500 mt-1">{{ $option->description }}</p>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+
+                                                        <div id="required-section-{{ $option->id }}" class="flex items-center space-x-2 mt-3 {{ in_array($option->id, $editProduct->options->pluck('id')->toArray()) ? '' : 'opacity-50' }}">
+                                                            <span class="text-sm font-medium text-gray-700">Obligatorio?</span>
+                                                            
+                                                            <input type="hidden" name="required_status[{{ $option->id }}]" value="0">
+                                                            
+                                                            <label for="required-toggle-{{ $option->id }}" class="relative inline-flex items-center cursor-pointer">
+                                                                <input type="checkbox" id="required-toggle-{{ $option->id }}" 
+                                                                    name="required_status[{{ $option->id }}]" value="1" class="sr-only peer"
+                                                                    {{ $editProduct->options->where('id', $option->id)->first()->pivot->required ?? 0 ? 'checked' : '' }} 
+                                                                    {{ in_array($option->id, $editProduct->options->pluck('id')->toArray()) ? '' : 'disabled' }}>
+
+                                                                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -187,6 +216,7 @@
 </div>
 @section('script')
 <script>
+   
      document.getElementById('edit-product-gallery-upload').addEventListener('change', function(e) {      
             const files = e.target.files;
             const galleryPreview = document.getElementById('edit-product-gallery-preview');
@@ -232,5 +262,7 @@
                 
                 reader.readAsDataURL(file);
             }
+            
         });
+        
         @endsection
