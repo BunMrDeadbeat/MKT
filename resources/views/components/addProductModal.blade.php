@@ -88,6 +88,10 @@
                                                 @if ($editProduct==null)
                                                     
                                                 @foreach($options as $option)
+                                                @if ($option->is_active!=1)
+                                                    @continue
+                                                    
+                                                @endif
                                                 {{-- awdnlanwdlqfkiuhawfhui --}}
                                                     <div class="option-item p-3 border-b"> 
                                                         <input type="checkbox" id="option-{{ $option->id }}" class="option-input" name="selected_options[]"
