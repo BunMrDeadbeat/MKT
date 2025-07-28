@@ -11,25 +11,33 @@ $hasOption11 = in_array('11', $optionIds);
             @endphp
             <div id=check>
                 @foreach ($options as $option)
-
                     @if ($option->id == '1')
+                    {{ $option->pivot->required }}
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño cuadrado (en metros)</label>
+                            <label class="block text-md font-medium text-gray-700 mb-1">Tamaño cuadrado (en metros)
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label> 
                             <div class="flex items-center space-x-3 ">
-                                <input type="number" name="alto"
+                                <input type="text" name="alto"
                                     class="form-input flex-1 block w-full rounded-md border-gray-300 border-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                    placeholder="Alto" min="1" value='1'>
+                                    placeholder="Alto" min="1" value="{{ old('alto', 1) }}">
                                 <span class="text-gray-500 text-lg font-semibold">X</span>
-                                <input type="number" name="ancho"
+                                <input type="text" name="ancho"
                                     class="form-input flex-1 block w-full rounded-md border-gray-300 border-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                    placeholder="Ancho" min="1" value='1'><a class=" font-semibold text-sm w-1/4 m-1">Metros cuadrados</a>
+                                    placeholder="Ancho" min="1" value="{{ old('ancho', 1) }}"><a class=" font-semibold text-sm w-1/4 m-1">Metros cuadrados</a>
                             </div>
                         </div>
                     @endif
 
                     @if ($option->id == '2')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md" id="design-section">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Diseño</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Diseño
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             @if ($hasOption3)
                                 <!-- Both options 2 and 4 are present: use radio buttons -->
                                 <div class="space-y-2">
@@ -42,7 +50,7 @@ $hasOption11 = in_array('11', $optionIds);
                                         <label class="block text-sm font-medium text-gray-700 mb-1">¿Qué tiene en mente?</label>
                                         <textarea name="idea" id="idea-textarea" placeholder="Quiero un diseño que incluya..."
                                             class="w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                            rows="3"></textarea>
+                                            rows="3">{{ old('idea') }}</textarea>
                                     </div>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="design_choice" value="upload" class="form-radio" id="upload-radio">
@@ -59,7 +67,7 @@ $hasOption11 = in_array('11', $optionIds);
                                     <label class="block text-sm font-medium text-gray-700 mb-1">¿Qué tiene en mente?</label>
                                     <textarea name="idea" id="idea-textarea"
                                         class="w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        rows="3" disabled></textarea>
+                                        rows="3" placeholder="Quiero un diseño que incluya..." disabled>{{ old('idea') }}</textarea>
                                 </div>
                             @endif
                         </div>
@@ -67,9 +75,13 @@ $hasOption11 = in_array('11', $optionIds);
 
                     @if ($option->id == '4')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <div class="w-full">
-                            <input type="text" name="cantidad" value="1"
+                            <input type="text" name="cantidad" value="{{ old('cantidad', 1) }}"
                                 class="form-input block w-50 rounded-md border-gray-300 border-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
                             </div>
                         </div>
@@ -77,7 +89,11 @@ $hasOption11 = in_array('11', $optionIds);
 
                     @if ($option->id == '3')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md" id="file-upload-section">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Diseño</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Diseño
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <div id="file-upload-container"
                                 class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-gray-400 transition duration-200 ease-in-out">
                                 <div class="space-y-1 text-center">
@@ -95,14 +111,18 @@ $hasOption11 = in_array('11', $optionIds);
                                 <img id="preview-img" src="" alt="Image Preview" class="max-w-full h-auto rounded-md">
                             </div>
                         </div>
-                        @if (!$hasOption2)
+                        @if (! $hasOption2)
                             <input type="hidden" name="design_choice" value="upload">
                         @endif
                     @endif
 
-                    @if ($option->id == '5' && !$hasOption11)
+                    @if ($option->id == '5')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de vinilo</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de vinilo
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <select name="tipo_vinilo"
                                 class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
                                 <option value="">Seleccione un tipo</option>
@@ -116,17 +136,25 @@ $hasOption11 = in_array('11', $optionIds);
                     @if ($option->id == '6')
 
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Diámetro (en cm)</label>
-                            <input type="number" name="diametro"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Diámetro (en cm)
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
+                            <input type="text" name="diametro"
                                 class="form-input block w-full rounded-md border-gray-300 border-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                min="1" placeholder="Ingrese el diámetro">
+                                min="1" placeholder="Ingrese el diámetro" value="{{ old('diametro', 1) }}">
                         </div>
 
                     @endif
 
                     @if ($option->id == '7')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <select name="tamano"
                                 class="form-input block w-full rounded-md border-gray-300 shadow-sm shadow-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
                                 <option value="">Seleccione un tamaño</option>
@@ -139,7 +167,11 @@ $hasOption11 = in_array('11', $optionIds);
 
                     @if ($option->id == '8')
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Color
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <div class="flex flex-wrap gap-3 mt-2">
                                 @php
                                     $colors = [
@@ -169,7 +201,11 @@ $hasOption11 = in_array('11', $optionIds);
                     @if ($option->id == '9')
 
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Cara</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Impresión en ambos lados
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <select name="cara"
                                 class="form-input block w-full rounded-md border-gray-300 shadow-sm shadow-gray-900 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
                                 <option value="">Seleccione una opción</option>
@@ -180,21 +216,29 @@ $hasOption11 = in_array('11', $optionIds);
                     @endif
 
                     @if ($option->id == '10')
-                    @if (!$hasOption11)
+                    @if (! $hasOption11)
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Detalles Extra</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Detalles Extra
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <textarea name="detalles_extra"
                                 class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
                                 rows="4"
-                                placeholder="Proporcione detalles adicionales como colores específicos, instrucciones de instalación, etc."></textarea>
+                                placeholder="Proporcione detalles adicionales como colores específicos, instrucciones de instalación, etc.">{{ old('detalles_extra') }}</textarea>
                         </div>
                     @else
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Detalles de su solicitud</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Detalles de su solicitud
+                                @if ($option->pivot->required == '1')
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
                             <textarea name="detalles_extra"
                                 class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
                                 rows="6"
-                                placeholder="Proporcione detalles sobre el producto o servicio que desea."></textarea>
+                                placeholder="Proporcione detalles sobre el producto o servicio que desea.">{{ old('detalles_extra') }}</textarea>
                         </div>
                     @endif
                     @endif

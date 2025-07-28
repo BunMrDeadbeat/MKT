@@ -103,6 +103,8 @@ class ProductController extends Controller
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:102400',
             'selected_options' => 'nullable|array',
             'selected_options.*' => 'integer|exists:options,id',
+            'required_status' => 'nullable|array',
+            'required_status.*' => 'boolean',
         ]);
 
         try {
@@ -128,17 +130,17 @@ class ProductController extends Controller
                 }
             }
 
-            if ($request->has('selected_options')) {
-                foreach ($request->input('selected_options') as $optionId) {
-                    $option = Option::find($optionId);
-                    if ($option) {
-                        $product->options()->attach($option->id, [
-                            'required' => false, 
-                            'values' => json_encode([]), 
-                        ]);
-                    }
-                }
+            $optionsToSync = [];
+            $selectedOptionIds = $request->input('selected_options', []);
+            $requiredStatuses = $request->input('required_status', []);
+
+            foreach ($selectedOptionIds as $optionId) {
+                $isRequired = (int) ($requiredStatuses[$optionId] ?? 0);
+                $optionsToSync[$optionId] = [
+                    'required' => $isRequired
+                ];
             }
+            $product->options()->sync($optionsToSync);
 
             return redirect()->route('admin.products')->with('success', 'Producto Creado Correctamente!');
         } catch (QueryException $e) {

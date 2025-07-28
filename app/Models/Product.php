@@ -22,7 +22,7 @@ class Product extends Model
     public function options()
     {
         return $this->belongsToMany(Option::class, 'product_option')
-                    ->withPivot('required', 'values')->withTimestamps();;
+                    ->withPivot('required', 'values')->withTimestamps()->orderBy('options.id', 'asc');
     }
       public function category()
     {

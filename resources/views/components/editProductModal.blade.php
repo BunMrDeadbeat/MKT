@@ -12,7 +12,7 @@
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="flex justify-between items-start">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="edit-product-modal-title">Editar Producto</h3>
-                        <button type="button" onclick="closeModal('edit-product-modal')" class="text-gray-400 hover:text-gray-500">
+                        <button type="button" onclick="history.back()" class="text-gray-400 hover:text-gray-500">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -202,7 +202,7 @@
                     <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-mktPurple text-base font-medium text-white hover:bg-mktPurple-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mktPurple sm:ml-3 sm:w-auto sm:text-sm">
                         Guardar Cambios
                     </button>
-                    <button type="button" onclick="closeModal('edit-product-modal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mktPurple sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" onclick="history.back()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mktPurple sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Cancelar
                     </button>
                 </div>

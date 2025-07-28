@@ -27,7 +27,7 @@
             
             @if(session('message'))
                 <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-                    {{ session('message') }}
+                    {!! session('message') !!}
                 </div>
             @endif
 
