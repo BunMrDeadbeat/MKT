@@ -23,35 +23,17 @@ class OrdenController extends Controller
 {
     // OrderController.php
 
-    public function show($id)
+   public function show(Orden $orden)
     {
-        $order = Orden::with(['user', 'product'])->findOrFail($id);
+        $orden->load(['user', 'product.producto']);
 
-        // Parse personalization JSON
-        $personalization = json_decode($order->opciones_personalizacion, true);
-
-        return response()->json([
-            'id' => $order->id,
-            'user' => $order->user,
-            'product' => $order->product,
-            'producto_id' => $order->producto_id,
-            'monto' => $order->monto,
-            'created_at' => $order->created_at,
-            'updated_at' => $order->updated_at,
-
-            // Personalization fields
-            'alto' => $personalization['alto'] ?? null,
-            'ancho' => $personalization['ancho'] ?? null,
-            'diametro' => $personalization['diametro'] ?? null,
-            'tamano' => $personalization['tamano'] ?? null,
-            'cara' => $personalization['cara'] ?? null,
-            'cantidad' => $personalization['cantidad'] ?? 1,
-        ]);
+        return response()->json($orden);
     }
+
     public function loadOrdersAdmin()
     {
         // Load orders with relationships to avoid N+1 queries
-        $orders = Orden::with(['user', 'product'])->latest()->paginate(10);
+        $orders = Orden::with(['user'])->latest()->paginate(10);
 
         return view('adminOrders', compact('orders'));
     }
@@ -405,4 +387,5 @@ class OrdenController extends Controller
             return response()->json(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.'], 500);
         }
     }
+    
 }

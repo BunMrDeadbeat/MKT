@@ -18,7 +18,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/landing', [landingController::class, 'updateSections'])->name('sections.update');
     
     Route::get('/ordenes', [OrdenController::class, 'loadOrdersAdmin'])->name('admin.orders');
-    Route::get('/ordenes/{id}/details', [OrdenController::class, 'show']);
+    Route::get('/ordenes/{orden}/details', [OrdenController::class, 'show']);
+    
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
