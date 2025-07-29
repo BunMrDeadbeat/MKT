@@ -16,7 +16,7 @@ class OrdenProducto extends Model
 
     public function opciones()
     {
-        return $this->hasMany(OrdenProductoOpcion::class);
+        return $this->hasMany(OrdenProductoOpcion::class, 'order_product_id');
     }
 
     public function producto()

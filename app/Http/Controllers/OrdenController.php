@@ -23,12 +23,18 @@ class OrdenController extends Controller
 {
     // OrderController.php
 
-   public function show(Orden $orden)
-    {
-        $orden->load(['user', 'product.producto']);
+  public function show($id)
+{
+    $orden = Orden::findOrFail($id);
 
-        return response()->json($orden);
-    }
+      $orden->load([
+        'user',
+        'product.producto',
+        'product.opciones' 
+    ]);
+
+    return view('adminOrders', compact('orden'));
+}
 
     public function loadOrdersAdmin()
     {
