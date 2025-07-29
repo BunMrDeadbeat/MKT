@@ -8,6 +8,8 @@ use App\Models\CartProduct;
 use App\Models\CartProductOption;
 use App\Models\Gallery;
 use App\Models\Orden;
+use App\Models\OrdenProducto;
+use App\Models\OrdenProductoOpcion;
 use App\Models\Product;
 use DB;
 use Illuminate\Auth\Events\Validated;
@@ -329,5 +331,78 @@ class OrdenController extends Controller
             'newSubtotal' => number_format($cart->total_price, 2),
             'newItemPrice' => number_format($cartProduct->unit_price * $cartProduct->quantity, 2)
         ]);
+    }
+
+    public function crearDesdeCarrito(Request $request)
+    {
+        $validated = $request->validate([
+            'item_ids' => 'required|array',
+            'item_ids.*' => 'integer|exists:carts_products,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $user = Auth::user();
+            $cart = $user->cart;
+
+            if (!$cart) {
+                return response()->json(['success' => false, 'message' => 'No se encontró el carrito.'], 404);
+            }
+
+            $cartItems = CartProduct::with('opciones')
+                ->where('cart_id', $cart->id)
+                ->whereIn('id', $validated['item_ids'])
+                ->get();
+
+            if ($cartItems->isEmpty()) {
+                return response()->json(['success' => false, 'message' => 'No se encontraron los artículos seleccionados en el carrito.'], 404);
+            }
+
+            $totalOrderPrice = 0;
+
+            // Crear la orden principal
+            $order = Orden::create([
+                'user_id' => $user->id,
+                'status' => 'pendiente', // O cualquier otro estado inicial
+            ]);
+
+            foreach ($cartItems as $cartItem) {
+                $totalOrderPrice += $cartItem->unit_price * $cartItem->quantity;
+                // Crear el producto de la orden
+                $orderProduct = OrdenProducto::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cartItem->product_id,
+                    'cantidad' => $cartItem->quantity,
+                    'precio_unitario' => $cartItem->unit_price,
+                ]);
+
+                // Copiar las opciones del carrito a la orden
+                foreach ($cartItem->opciones as $cartOption) {
+                    OrdenProductoOpcion::create([
+                        'order_product_id' => $orderProduct->id,
+                        'option_name' => $cartOption->option_name,
+                        'option_value' => $cartOption->option_value,
+                    ]);
+                }
+
+                // Eliminar el artículo del carrito
+                $cartItem->delete();
+            }
+
+            // Actualizar el precio total del carrito
+            $cart->total_price -= $totalOrderPrice;
+            $cart->save();
+            
+            // Aquí puedes añadir la lógica para generar formatos, como enviar un correo de confirmación.
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Solicitud creada con éxito.']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al crear la orden desde el carrito: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.'], 500);
+        }
     }
 }

@@ -18,11 +18,18 @@
 
         <div id="cart-footer" class="px-6 py-4 bg-gray-50 {{ $cartItems->isEmpty() ? 'hidden' : '' }}">
 
-             <div class="text-right">
-                <span class="text-lg font-semibold">
-                    Subtotal: <span id="cart-subtotal">${{ number_format($cart->total_price, 2) }}</span>
-                </span>
-             </div>
+             <div class="m-2 text-right">
+                
+                <div>
+                    <span class="text-lg font-semibold text-gray-800">Subtotal calculable: </span>
+                    <span id="cart-subtotal" class="text-lg font-bold text-gray-900">${{ number_format($cart->total_price, 2) }}</span>
+                </div>
+                
+                <div class="mt-1">
+                    <span class="text-xs text-gray-500">(sujeto a cambios después de revisión)</span>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>

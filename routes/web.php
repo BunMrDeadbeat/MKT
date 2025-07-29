@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\landingController;
+use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenController;
@@ -23,6 +24,10 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/usuarios', [UserController::class, 'loadUsers'])->name('admin.users');
     Route::get('/usuarios/{id}', [UserController::class, 'loadUsers'])->name('admin.editUsers');
+    Route::put('/usuarios/{user}/update-role', [UserController::class, 'updateUserRole'])->name('admin.users.updateRole');
+    Route::get('/usuarios/{user}/details', [UserController::class, 'getUserDetails'])->name('admin.users.details');
+    Route::put('/usuarios/{user}/update-details', [UserController::class, 'updateUserDetails'])->name('admin.users.updateDetails');
+
 
     Route::get('/categorias', [CategoriesController::class, 'index'])->name('admin.categories');
     Route::get('/categorias-editing', [CategoriesController::class, 'indexEditMode'])->name('admin.categories.editMode');
@@ -39,10 +44,22 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/productos/edit/{id}', [ProductController::class, 'loadEditProducts'])->name('products.startupdate');
     Route::delete('/productos/destroy/{id}', [ProductController::class, 'destroy'])->name('products.delete');
 
+    Route::get('/options', [OptionController::class, 'index'])->name('admin.options');
+    Route::post('/options', [OptionController::class, 'store'])->name('admin.options.store');
+    Route::get('/options/edit', [OptionController::class, 'indexEditMode'])->name('admin.options.editMode');
+    Route::put('/options/{option}', [OptionController::class, 'update'])->name('admin.options.update');
+    Route::delete('/options/{option}', [OptionController::class, 'destroy'])->name('admin.options.destroy');
+
+    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('admin.users');
+    Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('admin.users.destroy');
+
     Route::get('/', function () {
     return view('blank');});
 });
 
+
+Route::post('/solicitud/crear', [OrdenController::class, 'crearDesdeCarrito'])->name('solicitud.crear')->middleware('auth');
 
 Route::get('/store', [ProductController::class,'loadStore'])->name('store.main');
 

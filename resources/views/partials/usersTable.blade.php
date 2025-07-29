@@ -30,13 +30,21 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td> 
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->roles->first() && $user->roles->first()->name == 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
-                                {{ $user->roles->first() ? $user->roles->first()->name : 'No Role' }}
-                            </span>
+                            <form action="{{ route('admin.users.updateRole', $user) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <select name="role" onchange="this.form.submit()" class="border border-gray-300 rounded-md px-2 py-1 text-sm">
+                                    @foreach(App\Models\Role::all() as $role)
+                                        <option value="{{ $role->id }}" {{ $user->roles->first() && $user->roles->first()->id == $role->id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"> 
                             <div class="flex space-x-2">
-                                <button href="{{ route('admin.editUsers',$user->id) }}" class="text-yellow-600 hover:text-yellow-900 action-btn"> 
+                                <button onclick="openUserDetailsModal({{ $user->id }})" class="text-yellow-600 hover:text-yellow-900 action-btn"> 
                                     <i class="fas fa-edit"></i> 
                                 </button>
                                 <button class="text-red-600 hover:text-red-900 action-btn"> 
@@ -53,8 +61,6 @@
             </tbody>
         </table>
     </div>
-
-
     <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between"> 
         <div class="text-sm text-gray-500">
             @if ($users->total() > 0)

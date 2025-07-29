@@ -1,3 +1,43 @@
+document.addEventListener('DOMContentLoaded', function () {
+    const confirmOrderBtn = document.getElementById('confirm-order-btn');
+
+    if (confirmOrderBtn) {
+        confirmOrderBtn.addEventListener('click', function () {
+            const selectedItems = [];
+            document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+                selectedItems.push(checkbox.value);
+            });
+
+            if (selectedItems.length === 0) {
+                alert('Por favor, seleccione al menos un artículo para continuar.');
+                return;
+            }
+
+            fetch('/solicitud/crear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    item_ids: selectedItems
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Solicitud creada con éxito.');
+                    window.location.reload(); // O puedes redirigir a una página de confirmación
+                } else {
+                    alert('Error al crear la solicitud: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al procesar su solicitud.');
+            });
+        });
+    }
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 
@@ -148,3 +188,4 @@ async function updateCartQuantity(itemId, newQuantity) {
             console.error('Failed to update quantity:', error);
         }
     }
+});

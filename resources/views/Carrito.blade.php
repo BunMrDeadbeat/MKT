@@ -10,7 +10,7 @@
         
         {{-- Order Summary Section --}}
         <div class="lg:w-1/3">
-            {{-- @include('partials.cart.order-summary', ['summary' => $summaryDetails]) --}}
+            @include('partials.cart.order-summary')
             @include('partials.cart.security-info')
         </div>
         

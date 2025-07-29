@@ -11,6 +11,10 @@ $hasOption11 = in_array('11', $optionIds);
             @endphp
             <div id=check>
                 @foreach ($options as $option)
+                @if ($option->is_active==0)
+                    @continue
+                    
+                @endif
                     @if ($option->id == '1')
                     {{ $option->pivot->required }}
                         <div class="form-control my-5 shadow-black/50 shadow-lg p-4 rounded-md">

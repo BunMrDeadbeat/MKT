@@ -15,7 +15,7 @@
         <nav class="my-3 py-3">
             <div class="px-2 py-3 text-l uppercase text-mktPurple font-bold flex items-center ">Administración</div>
             <div class="px-4 py-2 text-xs uppercase text-blue-200 font-semibold  from-teal to-black bg-gradient-to-l">Principal</div>
-            <a href="{{ route('admin.dashboard') }}" class="border-y-3 border-green-950 nav-item flex items-center px-4 py-3 text-white hover:bg-mktPurple {{  request()->routeIs('admin.dashboard') ?  'bg-indigo-600' : ' bg-green-700' }} transition"   >
+            <a href="{{ route('admin.dashboard') }}" class="border-y-3 border-green-950 nav-item flex items-center px-4 py-3 text-white hover:bg-mktPurple {{  request()->routeIs('admin.dashboard') ? 'bg-indigo-600' : ' bg-green-700' }} transition"   >
                 <i class="fas fa-tachometer-alt mr-3"></i>
                 <span class="nav-text">Dashboard</span>
             </a>
@@ -30,6 +30,12 @@
             <a href="{{ route('admin.products') }}" class="border-b-3 border-green-950 nav-item flex items-center px-4 py-3 text-white hover:bg-mktPurple {{  request()->routeIs('admin.products') ? 'bg-indigo-600' : ' bg-green-700' }} transition"   >
                 <i class="fas fa-box mr-3"></i>
                 <span class="nav-text">Productos</span>
+            </a>
+
+            <a href="{{ route('admin.options') }}"
+                class="border-b-3 border-green-950 nav-item flex items-center px-4 py-3 text-white hover:bg-mktPurple {{ request()->routeIs('admin.options*') ? 'bg-indigo-600' : 'bg-green-700' }} transition">
+                <i class="fas fa-cogs mr-3"></i>
+                <span class="nav-text">Opciones</span>
             </a>
 
             <a href="{{ route('admin.categories') }}" class="border-b-3 border-green-950 nav-item flex items-center px-10 pt-1 pb-3 text-white hover:bg-mktPurple {{  request()->routeIs('admin.categories') ? 'bg-indigo-600' : ' bg-green-700' }} transition"   >
