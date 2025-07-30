@@ -393,5 +393,23 @@ class OrdenController extends Controller
             return response()->json(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.'], 500);
         }
     }
-    
+     public function destroy(Orden $orden)
+    {
+        try {
+            DB::beginTransaction();
+            
+            foreach ($orden->product as $producto) {
+                $producto->opciones()->delete();
+            }
+            $orden->product()->delete();
+            $orden->delete();
+            
+            DB::commit();
+
+            return redirect()->route('admin.orders')->with('success', 'Orden eliminada correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.orders')->with('error', 'Hubo un error al eliminar la orden: ' . $e->getMessage());
+        }
+    }
 }

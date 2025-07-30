@@ -19,6 +19,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     
     Route::get('/ordenes', [OrdenController::class, 'loadOrdersAdmin'])->name('admin.orders');
     Route::get('/ordenes/{orden}/details', [OrdenController::class, 'show'])->name('admin.orders.details');
+    Route::delete('/ordenes/{orden}/delete', [OrdenController::class, 'destroy'])->name('admin.orders.destroy');
     
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -51,9 +52,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/options/{option}', [OptionController::class, 'update'])->name('admin.options.update');
     Route::delete('/options/{option}', [OptionController::class, 'destroy'])->name('admin.options.destroy');
 
-    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('admin.users');
-    Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('admin.users.destroy');
+    // Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('admin.users');
+    // Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('admin.users.update');
+    // Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('admin.users.destroy');
 
     Route::get('/', function () {
     return view('blank');});

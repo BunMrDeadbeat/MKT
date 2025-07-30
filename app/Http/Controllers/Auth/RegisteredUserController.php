@@ -35,12 +35,16 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'countryCode' => ['required', 'string', 'regex:/^\+[0-9]{1,4}$/'],
+            'telefono' => ['required', 'numeric', 'digits:10'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'telefono' => $request->countryCode . $request->telefono,
             'password' => Hash::make($request->password),
+
         ]);
         $userRole = Role::where('name', 'user')->first();
         if ($userRole) {

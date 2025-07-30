@@ -1,9 +1,14 @@
 <div class="container mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold text-primary mb-6">Órdenes</h1>
 
-    @if(session('success'))
+     @if(session('success'))
         <div class="bg-green-100 text-green-700 p-4 rounded mb-4">
             {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+            {{ session('error') }}
         </div>
     @endif
 @isset($orders)
@@ -43,8 +48,12 @@
       <td class="px-6 py-4 text-sm text-gray-800">
        <a href="{{ route('admin.orders.details', $order->id) }}" class=" text-blue-600 hover:text-blue-800 font-medium" >
                 <i class="fas fa-eye"></i> 
-                <span class="view-order-details hidden sm:inline">Ver detalles</span>
+                <span class="view-order-details hidden sm:inline mx-2">Ver detalles</span>
             </a>
+             <button onclick="openDeleteModal({{ $order->id }}, '{{ $order->id }}')" class="text-red-600 hover:text-red-800 font-medium">
+                  <i class="fas fa-trash"></i>
+                  <span class="hidden sm:inline">Borrar</span>
+              </button>
       </td>
       </tr>
       @endforeach
@@ -156,6 +165,10 @@
                                 Finalizar Pedido
                             </button>
                         </form>
+
+                        <button onclick="openDeleteModal({{ $orden->id }}, '{{ $orden->id }}')" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Borrar Orden
+                        </button>
                     </div>
                 </div>
             </div>
@@ -165,9 +178,25 @@
         </div>
     </div>
 </div>
-
+@include('components.productDeleteModal')
 
 @section('scripts')
+<script>
+    function openDeleteModal(id, name) {
+        const modal = document.getElementById('delete-modal');
+        const title = document.getElementById('delete-modal-title');
+        const message = document.getElementById('delete-modal-message');
+        const form = document.getElementById('delete-form');
 
+        title.textContent = `Eliminar Orden #${name}`;
+        message.textContent = `¿Estás seguro de que deseas eliminar la orden #${name}? Esta acción no se puede deshacer.`;
+        form.action = `/admin/ordenes/${id}/delete`; 
 
+        modal.classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
+</script>
 @endsection

@@ -12,6 +12,8 @@ import AuthLayout from '@/layouts/auth-layout';
 type RegisterForm = {
     name: string;
     email: string;
+    countryCode: string;
+    telefono: string;
     password: string;
     password_confirmation: string;
 };
@@ -20,6 +22,8 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
+        countryCode: '+52',
+        telefono: '',
         password: '',
         password_confirmation: '',
     });
@@ -32,7 +36,7 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+        <AuthLayout title="Cree una cuenta" description="Ingrese sus datos a continuación para crear su cuenta">
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
@@ -67,6 +71,41 @@ export default function Register() {
                             placeholder="email@ejemplo.com"
                         />
                         <InputError message={errors.email} />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                        <Label htmlFor="telefono">Teléfono</Label>
+                        <div className="flex items-start gap-2">
+                            <div className="w-1/4">
+                                <Input
+                                    id="countryCode"
+                                    type="text"
+                                    required
+                                    tabIndex={3}
+                                    autoComplete="tel-country-code"
+                                    value={data.countryCode}
+                                    onChange={(e) => setData('countryCode', e.target.value)}
+                                    disabled={processing}
+                                    placeholder="+52"
+                                />
+                                <InputError message={errors.countryCode} className="mt-2" />
+                            </div>
+                            <div className="w-3/4">
+                                <Input
+                                    id="telefono"
+                                    type="tel"
+                                    required
+                                    tabIndex={4}
+                                    autoComplete="tel-national"
+                                    value={data.telefono}
+                                    onChange={(e) => setData('telefono', e.target.value)}
+                                    disabled={processing}
+                                    placeholder="10 dígitos"
+                                    maxLength={10}
+                                />
+                                <InputError message={errors.telefono} className="mt-2" />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="grid gap-2">
