@@ -324,8 +324,11 @@ class OrdenController extends Controller
     public function crearDesdeCarrito(Request $request)
     {
         $validated = $request->validate([
-            'item_ids' => 'required|array',
-            'item_ids.*' => 'integer|exists:carts_products,id',
+        'item_ids' => 'required|array',
+        'item_ids.*' => 'integer|exists:carts_products,id',
+        'payment_method' => 'required|string|in:transferencia,recolecta',
+        'notification_methods' => 'required|array|min:1',
+        'notification_methods.*' => 'string|in:email,whatsapp',
         ]);
 
         DB::beginTransaction();
@@ -352,6 +355,7 @@ class OrdenController extends Controller
             $order = Orden::create([
                 'user_id' => $user->id,
                 'status' => 'pendiente', // O cualquier otro estado inicial
+                'metodo_pago' => $validated['payment_method'],
             ]);
 
             foreach ($cartItems as $cartItem) {
@@ -373,6 +377,7 @@ class OrdenController extends Controller
                     ]);
                 }
 
+                
                 // Eliminar el artículo del carrito
                 $cartItem->delete();
             }
@@ -382,10 +387,24 @@ class OrdenController extends Controller
             $cart->save();
             
             // Aquí puedes añadir la lógica para generar formatos, como enviar un correo de confirmación.
-
+            $order->load('user', 'product.producto', 'product.opciones');
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'Solicitud creada con éxito.']);
+            if (in_array('email', $validated['notification_methods'])) {
+                Mail::to($user->email)->send(new FormatoOrden($order));
+            }
+            if (in_array('whatsapp', $validated['notification_methods'])) {
+                // Aquí puedes implementar la lógica para enviar notificaciones por WhatsApp
+                // Por ejemplo, usando una API de WhatsApp Business
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Solicitud creada con éxito.',
+                'order_id' => $order->id,
+                'folio' => $order->folio,
+            ]);
+
 
         } catch (\Exception $e) {
             DB::rollBack();

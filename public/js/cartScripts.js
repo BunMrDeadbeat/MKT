@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    
+
     const confirmOrderBtn = document.getElementById('confirm-order-btn');
 
     if (confirmOrderBtn) {
@@ -12,6 +14,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Por favor, seleccione al menos un artículo para continuar.');
                 return;
             }
+            
+            const paymentMethodInput = document.querySelector('input[name="payment_method"]:checked');
+            if (!paymentMethodInput) {
+                alert('Por favor, seleccione un método de pago.');
+                return;
+            }
+
+            const notificationMethodInputs = document.querySelectorAll('input[name="notification_methods[]"]:checked');
+            if (notificationMethodInputs.length === 0) {
+                alert('Por favor, seleccione al menos un medio de notificación.');
+                return;
+            }
+
+
+            const paymentMethod = paymentMethodInput.value;
+            const notificationMethods = Array.from(notificationMethodInputs).map(checkbox => checkbox.value);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             fetch('/solicitud/crear', {
                 method: 'POST',
@@ -20,7 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    item_ids: selectedItems
+                    item_ids: selectedItems,
+                    payment_method: paymentMethod, 
+                    notification_methods: notificationMethods
                 })
             })
             .then(response => response.json())

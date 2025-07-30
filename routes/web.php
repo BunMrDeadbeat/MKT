@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenController;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
+use App\Models\Orden;
 
 use Inertia\Inertia;
 
@@ -88,7 +89,8 @@ Route::post('/ordenes/crear', [OrdenController::class, 'store'])->name('orders.s
 Route::post('/ordenes/guardar', [OrdenController::class, 'storeCart'])->name('orders.storeCart');
 
 Route::get('mail1',function(){
-    return view('mail.formato-orden');
+    $order = Orden::where('user_id', auth()->id())->latest()->first()->load(['product', 'user']);
+    return view('mail.formato-orden',compact('order'));
 });
 
 Route::get('/', [landingController::class,'index'])->name('main');

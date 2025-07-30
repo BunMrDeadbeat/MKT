@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
+use App\View\Components\OrderConfirmationClientMailLayout;
 
 class FormatoOrden extends Mailable
 {
@@ -36,10 +37,15 @@ class FormatoOrden extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Su Confirmación de orden: #' . $this->order->order_number, 
+            subject: 'Su Confirmación de orden con folio: ' . $this->order->folio, 
         );
     }
 
+
+    public function layout(): string
+    {
+        return 'order-confirmation-client-mail-layout.blade';
+    }
     /**
      * Get the message content definition.
      */

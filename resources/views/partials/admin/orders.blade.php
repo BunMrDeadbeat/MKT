@@ -19,17 +19,18 @@
       <table class="min-w-full">
       <thead class="bg-gray-100">
       <tr>
-      <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID de Orden</th>
+      <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Folio de Orden</th>
       <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Fecha</th>
       <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Cliente</th>
       <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Estado</th>
+      <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Pagado?</th>
       <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Acciones</th>
       </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
       @foreach($orders as $order)
       <tr class="hover:bg-gray-50">
-      <td class="px-6 py-4 text-sm text-gray-800">#{{ $order->id }}</td>
+      <td class="px-6 py-4 text-sm text-gray-800">{{ $order->folio }}</td>
       <td class="px-6 py-4 text-sm text-gray-800">
       {{ $order->created_at->format('d/m/Y H:i') }}
       </td>
@@ -44,6 +45,9 @@
       @else bg-red-100 text-red-800 @endif">
       {{ ucfirst($order->status) }}
       </span>
+      </td>
+      <td class="px-6 py-4 text-sm text-gray-800">
+      {{ $order->pagado ? 'Sí' : 'No' }}
       </td>
       <td class="px-6 py-4 text-sm text-gray-800">
        <a href="{{ route('admin.orders.details', $order->id) }}" class=" text-blue-600 hover:text-blue-800 font-medium" >
@@ -91,6 +95,7 @@
             <div class="p-4 bg-gray-50 rounded-lg">
                   <div class="mb-6 pb-4 border-b border-gray-200">
                     <h4 class="text-xl font-semibold text-gray-800 mb-4">Orden #{{ $orden->id }}</h4>
+                    <h3 class="text-md font-regular text-gray-800 mb-4">Folio{{ $orden->folio }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <p class="text-gray-500 font-medium">Nombre del Cliente:</p>
