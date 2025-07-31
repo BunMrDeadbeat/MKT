@@ -15,15 +15,18 @@ use App\Models\Orden;
 
 use Inertia\Inertia;
 
-Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    
+Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(function () {
+
     Route::get('/landing', [landingController::class, 'editSections'])->name('admin.lander');
     Route::put('/landing', [landingController::class, 'updateSections'])->name('sections.update');
     
     Route::get('/ordenes', [OrdenController::class, 'loadOrdersAdmin'])->name('admin.orders');
     Route::get('/ordenes/{orden}/details', [OrdenController::class, 'show'])->name('admin.orders.details');
     Route::delete('/ordenes/{orden}/delete', [OrdenController::class, 'destroy'])->name('admin.orders.destroy');
-    
+    Route::patch('/ordenes/{orden}/status', [OrdenController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+    Route::post('/ordenes/{orden}/complete', [OrdenController::class, 'completeOrder'])->name('admin.orders.complete');
+    Route::post('/ordenes/{ordenProducto}/update-details', [OrdenController::class, 'updateDetails'])->name('admin.orders.updateDetails');
+
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
@@ -31,9 +34,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/usuarios/{id}', [UserController::class, 'loadUsers'])->name('admin.editUsers');
     Route::put('/usuarios/{user}/update-role', [UserController::class, 'updateUserRole'])->name('admin.users.updateRole');
     Route::get('/usuarios/{user}/details', [UserController::class, 'getUserDetails'])->name('admin.users.details');
-    Route::put('/usuarios/{user}/update-details', [UserController::class, 'updateUserDetails'])->name('admin.users.updateDetails');
-
-
+    
     Route::get('/categorias', [CategoriesController::class, 'index'])->name('admin.categories');
     Route::get('/categorias-editing', [CategoriesController::class, 'indexEditMode'])->name('admin.categories.editMode');
     Route::get('/categorias/{id}', [CategoriesController::class, 'indexProducts'])->name('admin.categories.showProducts');

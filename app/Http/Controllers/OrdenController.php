@@ -19,9 +19,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Exists;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
+use App\Mail\OrderCompleted;
 
 class OrdenController extends Controller
 {
@@ -40,10 +42,31 @@ class OrdenController extends Controller
     return view('adminOrders', compact('orden'));
 }
 
-    public function loadOrdersAdmin()
+    public function loadOrdersAdmin(Request $request)
     {
-        // Load orders with relationships to avoid N+1 queries
-        $orders = Orden::with(['user'])->latest()->paginate(10);
+        $query = Orden::with('user')->latest();
+        if ($request->filled('search')) {
+            $searchTerm = '%'.$request->input('search').'%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('folio', 'like', $searchTerm)
+                    ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
+                        $userQuery->where('name', 'like', $searchTerm)
+                            ->orWhere('email', 'like', $searchTerm);
+                    });
+            });
+        }
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        if ($startDate && $endDate) {
+            //fecha final incluya todo el día
+            $query->whereBetween('created_at', [$startDate, $endDate.' 23:59:59']);
+        } elseif ($startDate) {
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->where('created_at', '<=', $endDate.' 23:59:59');
+        }
+        $orders = $query->paginate(10);
 
         return view('adminOrders', compact('orders'));
     }
@@ -491,5 +514,100 @@ class OrdenController extends Controller
             DB::rollBack();
             return redirect()->route('admin.orders')->with('error', 'Hubo un error al eliminar la orden: ' . $e->getMessage());
         }
+    }
+    public function updateStatus(Request $request, Orden $orden)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:pendiente,procesando,completado,cancelado',
+        ]);
+
+        try {
+            $orden->status = $validated['status'];
+            $orden->save();
+
+            return back()->with('success', 'Estado de la orden actualizado correctamente.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Hubo un error al actualizar el estado de la orden.');
+        }
+    }
+    public function completeOrder(Orden $orden)
+    {
+        try {
+            $orden->status = 'completado';
+            $orden->save();
+
+            if ($orden->user && $orden->user->email) {
+                Mail::to($orden->user->email)->send(new OrderCompleted($orden));
+            }
+
+            // if ($orden->user && $orden->user->telefono) {
+            //     $message = "¡Hola, {$orden->user->name}! Tu pedido con folio #{$orden->folio} está listo para recoger. ¡Gracias por tu compra en ".config('app.name')."!";
+                
+              
+            //     $whatsappController = new WhatsAppController();
+            //     $whatsappController->sendWhatsAppMessage(
+            //         new Request([
+            //             'phone' => $orden->user->telefono,
+            //             'message' => $message
+            //         ])
+            //     );
+            // }
+
+            return back()->with('success', 'Orden marcada como completada. Se ha notificado al cliente.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al finalizar la orden: ' . $e->getMessage());
+        }
+    }
+    
+    public function updateDetails(Request $request, OrdenProducto $ordenProducto)
+    {
+        
+        $validator = Validator::make($request->all(), [
+            'precio_unitario' => 'required|numeric|min:0',
+            'options' => 'sometimes|array',
+            'options.*' => 'string|nullable',
+            'design_choice_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ajustado a 10MB como pediste en el anterior
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $ordenProducto->precio_unitario = $request->input('precio_unitario');
+        $ordenProducto->save();
+
+        if ($request->has('options')) {
+            foreach ($request->input('options') as $opcionId => $value) {
+                $opcion = $ordenProducto->opciones()->find($opcionId);
+                if ($opcion) {
+                    $opcion->option_value = $value;
+                    $opcion->save();
+                }
+            }
+        }
+        
+        if ($request->hasFile('design_choice_image')) {
+            $file = $request->file('design_choice_image');
+
+            $designOpcion = $ordenProducto->opciones()->firstOrNew(['option_name' => 'design']);
+
+            if ($designOpcion->exists && $designOpcion->option_value && Storage::disk('public')->exists($designOpcion->option_value)) {
+                Storage::disk('public')->delete($designOpcion->option_value);
+            }
+
+            $path = $file->store('designs', 'public');
+            $designOpcion->option_value = $path;
+            $designOpcion->save();
+        }
+
+        $orden = $ordenProducto->orden; 
+        
+        $totalMonto = $orden->product()->sum(\DB::raw('precio_unitario * cantidad'));
+        
+        $orden->monto = $totalMonto;
+        $orden->save();
+
+        return redirect()->route('admin.orders.show', $orden->id)->with('success', 'Producto actualizado correctamente en la cotización.');
     }
 }
