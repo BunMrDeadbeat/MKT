@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Orden;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -50,21 +54,15 @@ class UserController extends Controller
             'selectedDateRange'));
     }
 
-    function loadDashboard(Request $request){
+   public function loadDashboard()
+    {
         $user = Auth::user();
-         if ($user) {
-           
-            $userName = $user->name;
-            $userEmail = $user->email;
-            
-            return view('userSettingsDashboard', compact('user'));
+        $orders = Orden::where('user_id', $user->id)->latest()->paginate(10); 
 
-        }else {
-            return redirect()->route('login');
-        }
+        return view('userSettingsDashboard', compact('user', 'orders'));
     }
     
-    // Nuevo: Actualizar rol de usuario
+
     public function updateUserRole(Request $request, User $user)
     {
         $request->validate([
@@ -76,23 +74,64 @@ class UserController extends Controller
         return back()->with('success', 'Rol de usuario actualizado correctamente.');
     }
     
-    // Nuevo: Obtener detalles del usuario para el modal
+    
     public function getUserDetails(User $user)
     {
         return response()->json($user->load('roles'));
     }
 
-    // Nuevo: Actualizar detalles del usuario desde el modal
+     public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'telefono' => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->telefono = $request->telefono;
+        $user->save();
+
+        return back()->with('success', '¡Perfil actualizado con éxito!');
+    }
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', '¡Contraseña actualizada con éxito!');
+    }
     public function updateUserDetails(Request $request, User $user)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            // Agrega aquí más validaciones si es necesario
+           
         ]);
 
         $user->update($validatedData);
         
         return back()->with('success', 'Datos del usuario actualizados.');
+    }
+    public function showOrder(Orden $order)
+    {
+
+        if ($order->user_id !== Auth::id()) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $order->load('product.producto.galleries', 'product.opciones', 'user');
+
+        return response()->json($order);
     }
 }

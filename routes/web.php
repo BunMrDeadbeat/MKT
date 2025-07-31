@@ -83,9 +83,12 @@ Route::prefix('carrito')->middleware(['auth'])->group(function (){
 });
 
 
-Route::prefix('user')->middleware(['auth', 'role:user'])->group(function () {
+Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'loadDashboard'])->name('dash');
+    Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('update.profile');
+    Route::post('/update-password', [UserController::class, 'updatePassword'])->name('update.password');
+    Route::get('/orders/{order}', [UserController::class, 'showOrder'])->name('order.show');
 
-    Route::get('/dashboard', [UserController::class, 'loadDashboard'])->name('user.dash');
 });
 
 
