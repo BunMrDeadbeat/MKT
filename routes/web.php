@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\WhatsAppController;
+use App\Http\Controllers\AdministrativeNotificationRecipientController;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
 use App\Models\Orden;
@@ -54,6 +55,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/options/{option}', [OptionController::class, 'update'])->name('admin.options.update');
     Route::delete('/options/{option}', [OptionController::class, 'destroy'])->name('admin.options.destroy');
 
+    Route::get('notification-recipients', [AdministrativeNotificationRecipientController::class, 'index'])->name('admin.notification_recipients.index');
+    Route::post('notification-recipients', [AdministrativeNotificationRecipientController::class, 'store'])->name('admin.notification_recipients.store');
+    Route::delete('notification-recipients/{recipient}', [AdministrativeNotificationRecipientController::class, 'destroy'])->name('admin.notification_recipients.destroy');
     // Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('admin.users');
     // Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('admin.users.update');
     // Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('admin.users.destroy');
@@ -92,6 +96,11 @@ Route::post('/ordenes/guardar', [OrdenController::class, 'storeCart'])->name('or
 Route::get('mail1',function(){
     $order = Orden::where('user_id', auth()->id())->latest()->first()->load(['product', 'user']);
     return view('mail.formato-orden',compact('order'));
+});
+Route::get('mail2',function(){
+    $order = Orden::where('user_id', auth()->id())->latest()->first()->load(['product', 'user']);
+    $user = $order->user;
+    return view('mail.admin_order_notification',compact('order', 'user'));
 });
 
 Route::get('/', [landingController::class,'index'])->name('main');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\FormatoOrden;
+use App\Mail\AdminOrderNotification;
+use App\Models\AdministrativeNotificationRecipient;
 use App\Models\Cart;
 use App\Models\CartProduct;
 use App\Models\CartProductOption;
@@ -395,10 +397,15 @@ class OrdenController extends Controller
             if (in_array('email', $validated['notification_methods'])) {
                 Mail::to($user->email)->send(new FormatoOrden($order));
             }
-            if (in_array('whatsapp', $validated['notification_methods'])) {
-                 $this->sendWhatsAppNotification($user->telefono, $order);
+            if (in_array('whatsapp', $validated['notification_methods']) && $user->telefono) {
+                $this->sendWhatsAppNotification($user->telefono, $order);
             }
-
+            $adminRecipients = AdministrativeNotificationRecipient::with('user')->get();
+            foreach ($adminRecipients as $recipient) {
+                if ($recipient->user && $recipient->user->email) {
+                    Mail::to($recipient->user->email)->send(new AdminOrderNotification($order, $user));
+                }
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Solicitud creada con éxito.',
