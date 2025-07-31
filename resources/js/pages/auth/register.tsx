@@ -74,7 +74,7 @@ export default function Register() {
                     </div>
                     
                     <div className="grid gap-2">
-                        <Label htmlFor="telefono">Teléfono</Label>
+                        <Label htmlFor="telefono movil">Teléfono</Label>
                         <div className="flex items-start gap-2">
                             <div className="w-1/4">
                                 <Input

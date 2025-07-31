@@ -7,6 +7,7 @@ use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\WhatsAppController;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
 use App\Models\Orden;
@@ -107,6 +108,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect()->route('home');
     })->name('dashboard');
 });
+
+Route::post('/whatsapp/incoming', [WhatsAppController::class, 'handleIncomingMessage']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

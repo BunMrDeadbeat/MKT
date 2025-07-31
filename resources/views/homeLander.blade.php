@@ -10,7 +10,7 @@
                                 </script>
                             @endif
             <div class="floating-whatsapp">
-                <a href="https://wa.me/526311260295" target="_blank"
+                <a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}" target="_blank"
                     class="bg-green-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
                     <i class="fab fa-whatsapp text-2xl"></i>
                 </a>
@@ -60,7 +60,7 @@
                                         class="px-6 py-3 bg-mktGreen hover:bg-gray-100 text-mktPurple font-bold rounded-lg transition duration-300">
                                         Tienda <i class="fas fa-store-alt ml-2"></i>
                                     </a>
-                                    <a href="https://wa.me/+526313180029?text=Hola!%20Soy%20fan!!"
+                                    <a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}?text=Hola!%20Soy%20fan!!"
                                         class="px-6 py-3 bg-green-600 hover:bg-gray-100 text-mktPurple font-bold rounded-lg transition duration-300"
                                         target="_blank">
                                         WhatsApp <i class="fab fa-whatsapp font-bold ml-1"></i>

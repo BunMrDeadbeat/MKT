@@ -24,7 +24,7 @@
                                     <h3 class="text-xl font-semibold text-white mb-2 text-center">Menús y papelería</h3>
                                     <p class="text-gray-300 text-center">Impresión de alta calidad para menús, flyers, sublimación, bordado y toda la papelería que tu negocio necesita.</p>
                                     <div class="mt-4 text-center">
-                                        <span class="inline-block bg-yellow-400 text-gray-900 px-3 py-1 text-sm font-semibold rounded-full"><a href="https://wa.me/526311260295?text=Hola,%20me%20interesa%20saber%20sobre%20los%20servicios%20de%20impresi%C3%B3n%20que%20ofrecen">Detalles</a></span>
+                                        <span class="inline-block bg-yellow-400 text-gray-900 px-3 py-1 text-sm font-semibold rounded-full"><a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}?text=Hola,%20me%20interesa%20saber%20sobre%20los%20servicios%20de%20impresi%C3%B3n%20que%20ofrecen">Detalles</a></span>
                                     </div>
                                 </div>
 
@@ -33,7 +33,7 @@
                                     <h3 class="text-xl font-semibold text-white mb-2 text-center">Publicidad exterior</h3>
                                     <p class="text-gray-300 text-center">Anuncios 3D, lonas, vinil microperforado y soluciones visuales impactantes para captar toda la atención.</p>
                                     <div class="mt-4 text-center">
-                                        <span class="inline-block bg-yellow-400 text-gray-900 px-3 py-1 text-sm font-semibold rounded-full"><a href="https://wa.me/526311260295?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n%20acerca%20de%20su%20servicio%20de%20publicidad">Detalles</a></span>
+                                        <span class="inline-block bg-yellow-400 text-gray-900 px-3 py-1 text-sm font-semibold rounded-full"><a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}?text=Hola,%20deseo%20m%C3%A1s%20informaci%C3%B3n%20acerca%20de%20su%20servicio%20de%20publicidad">Detalles</a></span>
                                     </div>
                                 </div>
 
@@ -42,7 +42,7 @@
                                     <h3 class="text-xl font-semibold text-white mb-2 text-center">Branding corporativo</h3>
                                     <p class="text-gray-300 text-center">Desarrollo de logotipos, identidad visual y estrategias de branding para posicionar tu marca.</p>
                                     <div class="mt-4 text-center">                                            
-                                        <span class="inline-block bg-yellow-400 text-gray-900 px-3 py-1 text-sm font-semibold rounded-full"><a href="https://wa.me/526311260295?text=Hola,%20Quiero%20informaci%C3%B3n%20para%20el%20servicio%20de%20dise%C3%B1o%20corporativo">Detalles</a></span>
+                                        <span class="inline-block bg-yellow-400 text-gray-900 px-3 py-1 text-sm font-semibold rounded-full"><a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}?text=Hola,%20Quiero%20informaci%C3%B3n%20para%20el%20servicio%20de%20dise%C3%B1o%20corporativo">Detalles</a></span>
 
                                     </div>
                                 </div>

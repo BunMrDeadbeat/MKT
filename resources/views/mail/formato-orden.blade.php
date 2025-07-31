@@ -31,15 +31,15 @@
                                 <td>{{$orderItem->producto->name}}</td>
                                 <td>{{ $orderItem->cantidad }}</td>
                             <td>
-                                @if($orderItem->precio_unitario>0 && !is_null($orderItem->precio_unitario) && optional($orderItem->opciones->where('option_name', 'no_cotizacion')->first())->option_value == '1')
+                                @if($orderItem->precio_unitario > 0 && ! is_null($orderItem->precio_unitario) && optional($orderItem->opciones->where('option_name', 'no_cotizacion')->first())->option_value == '1')
                                     ${{number_format($orderItem->precio_unitario, 2)}}
                                 @else
                                     Pendiente
                                 @endif
                             </td>
                             <td>
-                                @if($orderItem->precio_unitario>0 && !is_null($orderItem->precio_unitario) && optional($orderItem->opciones->where('option_name', 'no_cotizacion')->first())->option_value == '1')
-                                    ${{number_format($orderItem->precio_unitario*$orderItem->cantidad, 2)}}
+                                @if($orderItem->precio_unitario > 0 && ! is_null($orderItem->precio_unitario) && optional($orderItem->opciones->where('option_name', 'no_cotizacion')->first())->option_value == '1')
+                                    ${{number_format($orderItem->precio_unitario * $orderItem->cantidad, 2)}}
                                 @else
                                     Pendiente
                                 @endif
@@ -56,7 +56,9 @@
             </div>
 
             <p style="text-align: center; margin-top: 30px;">
-                <a href="{{ route('main') }}" class="button">¡Revise el estado de su solicitud!</a>
+                <a href="{{ route('main') }}" class="button" style="color: #ffffff; text-decoration: none !important;">
+                    ¡Revise el estado de su solicitud!
+                </a>
             </p>
 
 
@@ -65,8 +67,8 @@
             <h2>¿Necesita ayuda?</h2>
             <p>Si tiene preguntas o necesita realizar cambios, ¡No dude en contactarnos!</p>
             <p>
-                Email: <a href="mailto:[YOUR_SUPPORT_EMAIL]" style="color: #70d40c;">[CORREO_DE_SOPORTE]</a><br>
-                Telefono: <a href="tel:[YOUR_SUPPORT_PHONE]" style="color: #70d40c;">[NUMERO_DE_SOPORTE]</a>
+                Email: <a href="mailto:Durannogales@gmail.com" style="color: #70d40c;">Durannogales@gmail.com</a><br>
+                Telefono: <a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}" style="color: #70d40c;">{{ env('WHATSAPP_SUPPORT_NUMBER') }}</a>
             </p>
             <p>Por favor mencione su folio de orden: <strong style="color: #70d40c;">{{ $order->folio }}</strong></p>
         </div>

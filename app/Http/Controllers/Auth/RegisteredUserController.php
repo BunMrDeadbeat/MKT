@@ -38,7 +38,9 @@ class RegisteredUserController extends Controller
             'countryCode' => ['required', 'string', 'regex:/^\+[0-9]{1,4}$/'],
             'telefono' => ['required', 'numeric', 'digits:10'],
         ]);
-
+        if($request->countryCode === '+1') {
+            $request->countryCode = $request->countryCode . '1'; 
+        }
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

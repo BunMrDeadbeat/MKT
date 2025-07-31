@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Exists;
+use Twilio\Rest\Client;
+use Illuminate\Support\Facades\Log;
 
 class OrdenController extends Controller
 {
@@ -394,8 +396,7 @@ class OrdenController extends Controller
                 Mail::to($user->email)->send(new FormatoOrden($order));
             }
             if (in_array('whatsapp', $validated['notification_methods'])) {
-                // Aquí puedes implementar la lógica para enviar notificaciones por WhatsApp
-                // Por ejemplo, usando una API de WhatsApp Business
+                 $this->sendWhatsAppNotification($user->telefono, $order);
             }
 
             return response()->json([
@@ -408,8 +409,61 @@ class OrdenController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al crear la orden desde el carrito: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.'], 500);
+        }
+    }
+    private function sendWhatsAppNotification(string $recipientPhoneNumber, Orden $order)
+    {
+        Log::info('--- Attempting to send WhatsApp message ---');
+        Log::info('Recipient Phone Number: '.$recipientPhoneNumber);
+
+        $twilioSid = env('TWILIO_SID');
+        $twilioAuthToken = env('TWILIO_AUTH_TOKEN');
+        $twilioWhatsAppFrom = env('TWILIO_WHATSAPP_FROM');
+        Log::info('Twilio SID from .env: ' . $twilioSid);
+        Log::info('Twilio From Number from .env: ' . $twilioWhatsAppFrom);
+        if (! $twilioSid || ! $twilioAuthToken || ! $twilioWhatsAppFrom) {
+            Log::error('Twilio credentials are not set in the .env file or cache.');
+            return; // Stop execution if credentials are not set
+        }
+        // Construct the message body
+        $messageBody = "🎉 *¡Su confirmación de orden DuranMKT!* 🎉\n\n";
+        $messageBody .= "¡Gracias por su preferencia!. Revisaremos su solicitud lo mas pronto posible.\n\n";
+        $messageBody .= "Hola *{$order->user->name}*,\n";
+        $messageBody .= "Su solicitud con número de folio *{$order->folio}* se ha ingresado a nuestro sistema y nos pondremos en contacto lo más pronto posible.\n\n";
+        $messageBody .= "--- *Detalles de solicitud* ---\n";
+
+        foreach ($order->product as $orderItem) {
+            $productName = $orderItem->producto->name;
+            $quantity = $orderItem->cantidad;
+            $subtotal = ($orderItem->precio_unitario > 0 && !is_null($orderItem->precio_unitario) && optional($orderItem->opciones->where('option_name', 'no_cotizacion')->first())->option_value == '1')
+                ? '$' . number_format($orderItem->precio_unitario * $orderItem->cantidad, 2)
+                : 'Pendiente';
+
+            $messageBody .= "🛍️ *Producto:* {$productName}\n";
+            $messageBody .= "🔢 *Cantidad:* {$quantity}\n";
+            $messageBody .= "💰 *Subtotal:* {$subtotal}\n\n";
+        }
+        $supportNumber = env('WHATSAPP_SUPPORT_NUMBER');
+        $messageBody .= "Pronto nos pondremos en contacto con usted.\n\n";
+        $messageBody .= "Si tiene preguntas o necesita realizar cambios, por favor envíe su mensaje a nuestro número de atención al cliente en WhatsApp: {$supportNumber}. ¡Estamos para ayudarle!\n";
+        $messageBody .= "Por favor mencione su folio de orden: *{$order->folio}*";
+        try {
+            $twilio = new Client($twilioSid, $twilioAuthToken);
+            $message = $twilio->messages->create(
+                "whatsapp:{$recipientPhoneNumber}", // Recipient's phone number
+                [
+                    "from" => "whatsapp:{$twilioWhatsAppFrom}", // Your Twilio sandbox number
+                    "body" => $messageBody,
+                ]
+
+            );
+             Log::info('WhatsApp message sent successfully! SID: ' . $message->sid);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+             Log::error('!!! WhatsApp notification failed !!!');
+        Log::error('Twilio Error: ' . $e->getMessage());
+            Log::error('WhatsApp notification failed: ' . $e->getMessage());
         }
     }
      public function destroy(Orden $orden)
