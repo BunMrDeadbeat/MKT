@@ -59,7 +59,10 @@
                             <span class="font-medium">{{ $user->name }}</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1 z-20 hidden group-hover:block">
+                        <div class="absolute right-0 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1 z-20 
+                opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 
+                transition-all duration-500 ease-out origin-top-right
+                pointer-events-none group-hover:pointer-events-auto">
                             <a href="{{ route('user.dash') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-violet-500 hover:text-white">Mi Panel</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -119,6 +122,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Fecha</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Estado</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Detalles</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Consultar</th>
                     </tr>
                 </thead>
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
@@ -140,7 +144,13 @@
                                 <i class="fas fa-eye mr-1"></i> Ver Detalle
                             </button>
                         </td>
+                        <td class="px-6 whitespace-nowrap text-xl text-center">
+                            <a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}?text={{ urlencode('Hola, quiero información sobre mi orden con folio ' . $order->folio) }}" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-brands fa-whatsapp text-green-400 hover:text-green-100"></i>
+                            </a>
+                        </td>
                     </tr>
+                    
                     @empty
                     <tr>
                         <td colspan="4" class="px-6 py-4 text-center text-gray-500">No tienes órdenes registradas.</td>
@@ -211,7 +221,13 @@
                         <p x-text="new Date(order.created_at).toLocaleDateString('es-ES')" class="text-gray-200"></p>
                     </div>
                 </div>
+                <div x-if="order.product.every(item => item.cotizado)" class="p-4 bg-gray-700/50 rounded-lg">
+                    <h4 class="text-xl font-semibold text-gray-200 mb-4">
+                        Total de la Orden:
+                    </h4>
+                    <p class="text-2xl font-bold text-violet-400" x-text="`$${parseFloat(order.monto).toFixed(2)}`"></p>
 
+                </div>
                 <div>
                     <h4 class="text-xl font-semibold text-gray-200 mb-4">Productos</h4>
                     <div class="space-y-4">
@@ -222,36 +238,39 @@
                                     <div class="flex-grow text-center sm:text-left">
                                         <p class="font-semibold text-lg text-gray-200" x-text="item.producto.name"></p>
                                         <p class="text-sm text-gray-400" x-text="`Cantidad: ${item.cantidad}`"></p>
-                                        <p class="text-sm text-gray-400" x-text="`Precio Unitario: $${parseFloat(item.precio_unitario).toFixed(2)}`"></p>
+                                        <template x-if="item.cotizado">
+                                            <p class="text-sm text-green-400" x-text="`Precio cotizado: $${parseFloat(item.precio_unitario).toFixed(2)}`"></p>
+                                        </template>
+
                                     </div>
                                 </div>
                                 <template x-if="item.opciones && item.opciones.filter(opt => opt.option_name !== 'no_cotizacion').length > 0">
                                     <div class="mt-4 pt-3 border-t border-gray-600">
-    <p class="text-sm font-semibold text-gray-300 mb-2">Opciones:</p>
-    <div class="space-y-3 text-sm text-gray-400">
-        <template x-for="opcion in item.opciones.filter(opt => opt.option_name !== 'no_cotizacion')" :key="opcion.id">
-            <div>
-                {{-- Condición: Si la opción es un Diseño, muéstrala como imagen --}}
-                <template x-if="opcion.option_name.toLowerCase() === 'design'">
-                    <div>
-                        <strong class="text-gray-300">Diseño Personalizado:</strong>
-                        <a :href="`/storage/${opcion.option_value}`" target="_blank" title="Ver diseño en tamaño completo">
-                            <img :src="`/storage/${opcion.option_value}`" alt="Diseño del usuario" class="mt-2 w-full max-w-xs h-auto rounded-lg border-2 border-gray-600 hover:border-violet-500 transition-colors">
-                        </a>
-                    </div>
-                </template>
+                                        <p class="text-sm font-semibold text-gray-300 mb-2">Opciones:</p>
+                                        <div class="space-y-3 text-sm text-gray-400">
+                                            <template x-for="opcion in item.opciones.filter(opt => opt.option_name !== 'no_cotizacion')" :key="opcion.id">
+                                                <div>
+                                                    {{-- Condición: Si la opción es un Diseño, muéstrala como imagen --}}
+                                                    <template x-if="opcion.option_name.toLowerCase() === 'design'">
+                                                        <div>
+                                                            <strong class="text-gray-300">Diseño Personalizado:</strong>
+                                                            <a :href="`/storage/${opcion.option_value}`" target="_blank" title="Ver diseño en tamaño completo">
+                                                                <img :src="`/storage/${opcion.option_value}`" alt="Diseño del usuario" class="mt-2 w-full max-w-xs h-auto rounded-lg border-2 border-gray-600 hover:border-violet-500 transition-colors">
+                                                            </a>
+                                                        </div>
+                                                    </template>
 
-                {{-- Caso contrario: Muestra la opción como texto normal --}}
-                <template x-if="opcion.option_name.toLowerCase() !== 'design'">
-                    <p>
-                        <strong class="text-gray-300" x-text="`${opcion.option_name.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())}: `"></strong>
-                        <span x-text="opcion.option_value"></span>
-                    </p>
-                </template>
-            </div>
-        </template>
-    </div>
-</div>
+                                                    {{-- Caso contrario: Muestra la opción como texto normal --}}
+                                                    <template x-if="opcion.option_name.toLowerCase() !== 'design'">
+                                                        <p>
+                                                            <strong class="text-gray-300" x-text="`${opcion.option_name.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())}: `"></strong>
+                                                            <span x-text="opcion.option_value"></span>
+                                                        </p>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
                                 </template>
                             </div>
                         </template>
@@ -314,7 +333,7 @@
                             </div>
                             <div class="text-right">
                                 <button type="submit" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-violet-700 transition-colors">
-                                    Cambiar Contraseñ
+                                    Cambiar Contraseña
                                 </button>
                             </div>
                         </div>

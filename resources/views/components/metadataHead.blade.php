@@ -18,7 +18,30 @@
 </head>
 <body class="bg-stone-200 text-gray-900">
     @yield('LayoutBody')
+
+
+
+     <x-global-alert-modal />
+
+    @if (session('success') || session('error') || session('info') || $errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.dispatchEvent(new CustomEvent('show-modal', {
+                detail: {
+                    type: '{{ session('success') ? 'success' : (session('error') ? 'error' : 'info') }}',
+                    @if ($errors->any())
+                        type: 'error',
+                        message: `<ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>`
+                    @else
+                        message: `{!! session('success') ?? session('error') ?? session('info') !!}`
+                    @endif
+                }
+            }));
+        });
+    </script>
+    @endif
     @yield('scripts')
+    
     
 </body>
 </html>

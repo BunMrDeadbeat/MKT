@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Exists;
+use Monolog\Handler\IFTTTHandler;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
 use App\Mail\OrderCompleted;
@@ -51,7 +52,8 @@ class OrdenController extends Controller
                 $q->where('folio', 'like', $searchTerm)
                     ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
                         $userQuery->where('name', 'like', $searchTerm)
-                            ->orWhere('email', 'like', $searchTerm);
+                            ->orWhere('email', 'like', $searchTerm)
+                            ->orWhere('telefono', 'like', $searchTerm); 
                     });
             });
         }
@@ -66,7 +68,13 @@ class OrdenController extends Controller
         } elseif ($endDate) {
             $query->where('created_at', '<=', $endDate.' 23:59:59');
         }
-        $orders = $query->paginate(10);
+         $query->when($request->filled('payment_status'), function ($q) use ($request) {
+            return $q->where('pagado', $request->input('payment_status'));
+        });
+        $query->when($request->filled('order_status'), function ($q) use ($request) {
+            return $q->where('status', $request->input('order_status'));
+        });
+        $orders = $query->paginate(10)->withQueryString();
 
         return view('adminOrders', compact('orders'));
     }
@@ -377,12 +385,17 @@ class OrdenController extends Controller
             }
 
             $totalOrderPrice = 0;
-
+            $paymentMethod = $validated['payment_method'];
+            if($paymentMethod === 'transferencia') {
+                $paymentMethod = 'Transferencia Bancaria';
+            } elseif($paymentMethod === 'recolecta') {
+                $paymentMethod = 'Pago en Tienda';
+            }
             // Crear la orden principal
             $order = Orden::create([
                 'user_id' => $user->id,
                 'status' => 'pendiente', // O cualquier otro estado inicial
-                'metodo_pago' => $validated['payment_method'],
+                'metodo_pago' => $paymentMethod,
             ]);
 
             foreach ($cartItems as $cartItem) {
@@ -515,14 +528,25 @@ class OrdenController extends Controller
             return redirect()->route('admin.orders')->with('error', 'Hubo un error al eliminar la orden: ' . $e->getMessage());
         }
     }
+    
     public function updateStatus(Request $request, Orden $orden)
     {
         $validated = $request->validate([
             'status' => 'required|string|in:pendiente,procesando,completado,cancelado',
+            'pagado' => 'sometimes|boolean',
         ]);
 
         try {
+            if($validated['status'] != 'cancelado' && $validated['status'] != 'pendiente'){
+                foreach ($orden->product as $producto) {
+                    if($producto->cotizado == 0){
+                        return back()->with('error', 'No se puede cambiar el estado de la orden porque contiene productos que no han sido cotizados.');
+                    }
+                }
+            }
+
             $orden->status = $validated['status'];
+            $orden->pagado = $validated['pagado'] ?? $orden->pagado;
             $orden->save();
 
             return back()->with('success', 'Estado de la orden actualizado correctamente.');
@@ -533,6 +557,11 @@ class OrdenController extends Controller
     public function completeOrder(Orden $orden)
     {
         try {
+             foreach ($orden->product as $producto) {
+                    if($producto->cotizado == 0){
+                        return back()->with('error', 'No se puede marcar la orden como completada porque contiene productos que no han sido cotizados.');
+                    }
+                }
             $orden->status = 'completado';
             $orden->save();
 
@@ -562,19 +591,18 @@ class OrdenController extends Controller
     
     public function updateDetails(Request $request, OrdenProducto $ordenProducto)
     {
-        
-        $validator = Validator::make($request->all(), [
-            'precio_unitario' => 'required|numeric|min:0',
+
+        $validated = $request->validate([
+            'precio_unitario' => 'required|numeric|min:1',
             'options' => 'sometimes|array',
             'options.*' => 'string|nullable',
             'design_choice_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ajustado a 10MB como pediste en el anterior
         ]);
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
 
         $ordenProducto->precio_unitario = $request->input('precio_unitario');
+        
+        $ordenProducto->cotizado = '1';
         $ordenProducto->save();
 
         if ($request->has('options')) {
@@ -601,13 +629,51 @@ class OrdenController extends Controller
             $designOpcion->save();
         }
 
-        $orden = $ordenProducto->orden; 
+        $orden = Orden::findOrFail($ordenProducto->order_id);  
         
-        $totalMonto = $orden->product()->sum(\DB::raw('precio_unitario * cantidad'));
-        
+        $totalMonto = 0;
+        foreach ($orden->product as $producto) {
+            $totalMonto += $producto->precio_unitario * $producto->cantidad;
+        }
         $orden->monto = $totalMonto;
-        $orden->save();
+        $orden->save(); 
 
-        return redirect()->route('admin.orders.show', $orden->id)->with('success', 'Producto actualizado correctamente en la cotización.');
+        return redirect()->route('admin.orders.details', $orden->id)->with('success', 'Producto actualizado correctamente en la cotización.');
+    }
+     public function destroyProduct(OrdenProducto $ordenProducto)
+    {
+        
+        DB::beginTransaction();
+
+        try {
+            $orden = Orden::findOrFail($ordenProducto->order_id);
+            $ordenProducto->opciones()->delete();
+
+            $ordenProducto->delete();
+
+            $orden->load('product'); 
+            
+            $nuevoTotal = $orden->product->sum(function ($producto) {
+                if ($producto->cotizado == 1) {
+                    return $producto->precio_unitario * $producto->cantidad;
+                }
+            });
+
+            $orden->monto = $nuevoTotal;
+            $orden->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.orders.details', $orden->id)
+                             ->with('success', 'Artículo eliminado de la orden exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error al eliminar producto de la orden: ' . $e->getMessage());
+
+            return redirect()->route('admin.orders.details', $orden->id)
+                             ->with('error', 'Ocurrió un error al intentar eliminar el artículo.');
+        }
     }
 }

@@ -16,8 +16,18 @@
     <form action="{{ route('admin.orders') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
         {{-- Campo de Búsqueda General --}}
         <div class="md:col-span-2">
-            <label for="search" class="block text-sm font-medium text-gray-700">Buscar por Folio, Cliente o Email</label>
+            <label for="search" class="block text-sm font-medium text-gray-700">Buscar por Folio, Nombre, Email o Telefono.</label>
             <input type="text" name="search" id="search" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ request('search') }}" placeholder="Escribe aquí...">
+        </div>
+        {{-- Campo de Estado de Pago --}}
+        <div class="md:col-span-2">
+            <label for="payment_status" class="block text-sm font-medium text-gray-700">Estado de Pago</label>
+            <select name="payment_status" id="payment_status" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="">Todos</option>
+                {{-- La directiva @selected de Blade simplifica la selección de la opción actual --}}
+                <option value="1" @selected(request('payment_status') == '1')>Pagado</option>
+                <option value="0" @selected(request('payment_status') === '0')>No Pagado</option>
+            </select>
         </div>
 
         {{-- Campo de Fecha de Inicio --}}
@@ -30,6 +40,17 @@
         <div>
             <label for="end_date" class="block text-sm font-medium text-gray-700">Fecha Hasta</label>
             <input type="date" name="end_date" id="end_date" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ request('end_date') }}">
+        </div>
+
+         <div class="md:col-span-2">
+            <label for="order_status" class="block text-sm font-medium text-gray-700">Estado de Orden</label>
+            <select name="order_status" id="order_status" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="">Todos</option>
+                <option value="pendiente" @selected(request('order_status') == 'pendiente')>Pendiente</option>
+                <option value="procesando" @selected(request('order_status') === 'procesando')>Procesando</option>
+                <option value="completado" @selected(request('order_status') === 'completado')>Completado</option>
+                <option value="cancelado" @selected(request('order_status') === 'cancelado')>Cancelado</option>
+            </select>
         </div>
 
         {{-- Botones de Acción --}}
@@ -142,10 +163,11 @@
                                   <p class="text-gray-800">{{ $orden->created_at->format('d/m/Y H:i') }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-500">
+                                    <p class="text-sm text-gray-500 font-medium">
                                         Estado: <span class="font-semibold px-2 py-1 rounded-full 
                                             @switch($orden->status)
                                                 @case('pendiente') bg-yellow-200 text-yellow-800 @break
+                                                @case('procesando') bg-blue-200 text-blue-800 @break
                                                 @case('completado') bg-green-200 text-green-800 @break
                                                 @case('cancelado') bg-red-200 text-red-800 @break
                                                 @default bg-gray-200 text-gray-800
@@ -154,6 +176,10 @@
                                     </p>
                                 </div>
                                 <div>
+                                    
+                                    
+                                  <p class="text-gray-500 font-medium">Monto de Cotización:</p>
+                                  <p class="text-gray-800 font-semibold">${{ number_format($orden->monto, 2) }}</p>
                                     <p class="text-sm text-gray-500">
                                         Pagado?: <span class="font-semibold px-2 py-1 rounded-full 
                                             @if($orden->pagado)
@@ -164,7 +190,59 @@
                                         
                                     </p>
                                 </div>
+                                <div>
+                                    <p class="text-gray-500 font-medium">Metodo de pago preferido:</p>
+                                    <p class="text-gray-800">{{ $orden->metodo_pago }}</p>
+                                </div>
+                                
                               </div>
+                              
+                             <div>
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">Administración de orden</h4>
+                                <div class="flex items-center space-x-4">
+                                    <form action="{{ route('admin.orders.updateStatus', $orden->id) }}" method="POST" class="flex-grow">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-100 space-x-4">
+                                            <div class="m-3">
+                                                <p class="text-gray-500 font-medium">Status de la orden</p>
+                                            <select name="status" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                <option value="pendiente" {{ $orden->status == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                                <option value="procesando" {{ $orden->status == 'procesando' ? 'selected' : '' }}>En proceso</option>
+                                                <option value="completado" {{ $orden->status == 'completado' ? 'selected' : '' }}>Completado</option>
+                                                <option value="cancelado" {{ $orden->status == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                                            </select>
+                                            </div>
+                                            <div class="m-3">
+                                                <p class="text-gray-500 font-medium">Status del pago</p>
+                                            <select name="pagado" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                <option value="0" {{ $orden->pagado == false ? 'selected' : '' }}>No pagado</option>
+                                                <option value="1" {{ $orden->pagado == true ? 'selected' : '' }}>Pagado</option>
+                                            </select>
+                                            </div>
+                                            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                Actualizar Estado
+                                            </button>
+                                            
+                                        </div>
+                                    </form>
+                                    <div class="space-x-2">
+                                    <div class="flex items-center space-x-4 m-4 ">
+                                    <button type="button" onclick="openCompleteOrderModal({{ $orden->id }})"
+                                            class="h-10 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                            title="El botón Finalizar Pedido es usado para notificar al cliente que los artículos en su orden están listos para ser recogidos.">
+                                        Finalizar Pedido
+                                    </button>
+                                    </div>
+                                    <div class="flex items-center space-x-4 m-4">
+                                    <button onclick="openDeleteModal({{ $orden->id }}, '{{ $orden->id }}')" class="h-10 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        Borrar Orden
+                                    </button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                               <div class="mb-6">
 
                                 <h4 class="text-xl font-semibold text-gray-800 mb-4">Productos</h4>
@@ -179,15 +257,24 @@
 
                                               <div class="flex-grow">
                                                   <p class="font-semibold text-lg text-gray-900">{{ $ordenProducto->producto->name }}</p>
+                                                  @if ($ordenProducto->cotizado)
+                                                  <p class="font-semibold text-lg text-gray-900">Cotizado <i class="fas fa-check-circle text-green-500"></i></p>
+                                                  @endif
                                                   <p class="text-sm text-gray-600">Cantidad: {{ $ordenProducto->cantidad }}</p>
                                                   <p class="text-sm text-gray-600">Precio Unitario: ${{ number_format($ordenProducto->precio_unitario, 2) }}</p>
                                                 <div class="mt-2">
-                                                    <label for="precio_unitario_{{ $ordenProducto->id }}" class="text-sm font-medium text-gray-700">Precio Unitario Cotizado:</label>
+                                                    <label for="precio_unitario" class="text-sm font-medium text-gray-700">Precio Unitario Cotizado:</label>
                                                     <div class="relative mt-1">
                                                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                             <span class="text-gray-500 sm:text-sm">$</span>
                                                         </div>
-                                                        <input type="number" step="0.01" name="products[{{ $ordenProducto->id }}][precio_unitario]" id="precio_unitario_{{ $ordenProducto->id }}" value="{{ old('products.'.$ordenProducto->id.'.precio_unitario', $ordenProducto->precio_unitario) }}" class="p-2 block w-full rounded-md border-gray-300 pl-7 pr-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                                        <input type="number" step="0.01" name="precio_unitario" 
+                                                        @if ($ordenProducto->cotizado)
+                                                            value="{{ old('products.'.$ordenProducto->id.'.precio_unitario', $ordenProducto->precio_unitario) }}"
+                                                            @else
+                                                        value= "{{ old('products.'.$ordenProducto->id.'.precio_unitario', 0) }}"
+                                                        @endif
+                                                         class="p-2 block w-full rounded-md border-gray-300 pl-7 pr-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                     </div>
                                                     @error('products.'.$ordenProducto->id.'.precio_unitario')
                                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -234,8 +321,19 @@
                                                             <li class="mt-4">
                                                                 <strong class="block mb-1">Subir/Actualizar Diseño Profesional:</strong>
                                                                 <p class="text-xs text-gray-500 mb-2">Sube un archivo para agregar o reemplazar el diseño profesional de este producto.</p>
-                                                                <input type="file" name="design_choice_image[{{ $ordenProducto->id }}]" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                                                @error('design_choice_image.'.$ordenProducto->id)
+
+                                                                {{-- Contenedor para la vista previa de la imagen --}}
+                                                                <div id="image_preview_container_{{ $ordenProducto->id }}" class="mt-2 w-48 h-48 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center" style="display: none;">
+                                                                    <img id="image_preview_{{ $ordenProducto->id }}" src="#" alt="Vista previa" class="max-w-full max-h-full rounded-lg" />
+                                                                </div>
+
+                                                                <input 
+                                                                    type="file" 
+                                                                    name="design_choice_image" 
+                                                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                                    onchange="previewImage(event, {{ $ordenProducto->id }})">
+                                                                    
+                                                                @error('design_choice_image')
                                                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                                                 @enderror
                                                             </li>
@@ -243,46 +341,25 @@
                                                     </ul>
                                                 </div>
                                             @endif
+                                        </form>
                                             <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
-                                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-colors">
-                                                    Actualizar item
+                                                <button type="submit" class="mx-3 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-colors">
+                                                    Aplicar cambios y cotizar
                                                 </button>
+                                                
+                                            <form action="{{ route('admin.orders.destroyProduct', $ordenProducto) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este artículo de la orden?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors">
+                                                    Eliminar
+                                                </button>
+                                            </form>
                                             </div>
                                         </div>
-                                    </form>
                                     @endforeach
                                 </div>
                             </div>     
 
-                             <div>
-                                <h4 class="text-xl font-semibold text-gray-800 mb-4">Administración</h4>
-                                <div class="flex items-center space-x-4">
-                                    <form action="{{ route('admin.orders.updateStatus', $orden->id) }}" method="POST" class="flex-grow">
-                                        @csrf
-                                        @method('PATCH')
-                                        <div class="flex items-center">
-                                            <select name="status" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                <option value="pendiente" {{ $orden->status == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
-                                                <option value="procesando" {{ $orden->status == 'procesando' ? 'selected' : '' }}>En proceso</option>
-                                                <option value="completado" {{ $orden->status == 'completado' ? 'selected' : '' }}>Completado</option>
-                                                <option value="cancelado" {{ $orden->status == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
-                                            </select>
-                                            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                                Actualizar Estado
-                                            </button>
-                                            
-                                        </div>
-                                    </form>
-                                    <button type="button" onclick="openCompleteOrderModal({{ $orden->id }})"
-                                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                        Finalizar Pedido
-                                    </button>
-
-                                    <button onclick="openDeleteModal({{ $orden->id }}, '{{ $orden->id }}')" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                        Borrar Orden
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     @endisset
                 </div>
@@ -295,6 +372,24 @@
 @include('components.productDeleteModal')
 
 @section('scripts')
+<script>
+    function previewImage(event, ordenProductoId) {
+        const reader = new FileReader();
+        const imagePreview = document.getElementById(`image_preview_${ordenProductoId}`);
+        const previewContainer = document.getElementById(`image_preview_container_${ordenProductoId}`);
+
+        reader.onload = function(){
+            if (reader.readyState === 2) {
+                imagePreview.src = reader.result;
+                previewContainer.style.display = 'flex'; 
+            }
+        }
+
+        if(event.target.files[0]){
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+</script>
 <script>
     const completeOrderModal = document.getElementById('completeOrderModal');
     const completeOrderForm = document.getElementById('completeOrderForm');

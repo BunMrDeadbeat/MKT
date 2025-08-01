@@ -20,6 +20,7 @@
 
     @endsection
     @section('scripts')
+         <script src="{{ asset('js/modalHandler.js') }}"></script>
         <script src="{{ asset('js/cartScripts.js') }}"></script>
 
     @endsection
