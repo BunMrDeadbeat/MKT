@@ -11,7 +11,7 @@ class landingController extends Controller
 {
     public function index()
     {
-        $productIds = Product::whereHas('galleries')->where('category_id','1')->pluck('id');
+        $productIds = Product::whereHas('galleries')->where('name', strtolower('publicidad'))->pluck('id');
         $randomIds = collect($productIds)->shuffle()->take(12);
         $products = Product::whereIn('id', $randomIds)
             ->with('galleries')

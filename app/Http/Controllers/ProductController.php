@@ -66,7 +66,7 @@ class ProductController extends Controller
 
     public function loadStore()
     {
-         $categorias = Category::all();
+        $categorias = Category::all();
         $productos = Product::with('options')->paginate(20);
         return view('store', compact( 'categorias', 'productos'));
     }
