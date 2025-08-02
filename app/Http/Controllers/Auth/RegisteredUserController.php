@@ -31,13 +31,32 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $messages = [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'name.string' => 'El campo nombre debe ser una cadena de texto.',
+            'name.max' => 'El campo nombre no debe exceder los 255 caracteres.',
+            'email.required' => 'El campo correo electrónico es obligatorio.',
+            'email.string' => 'El campo correo electrónico debe ser una cadena de texto.',
+            'email.lowercase' => 'El campo correo electrónico debe estar en minúsculas.',
+            'email.email' => 'El campo correo electrónico debe ser una dirección de correo válida.',
+            'email.max' => 'El campo correo electrónico no debe exceder los 255 caracteres.',
+            'email.unique' => 'Este correo electrónico ya está en uso.',
+            'password.required' => 'El campo contraseña es obligatorio.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+            'countryCode.required' => 'El código de país es obligatorio.',
+            'countryCode.string' => 'El código de país debe ser una cadena de texto.',
+            'countryCode.regex' => 'El formato del código de país no es válido. Ejemplo: +52',
+            'telefono.required' => 'El campo teléfono es obligatorio.',
+            'telefono.numeric' => 'El campo teléfono debe ser un número.',
+            'telefono.digits' => 'El campo teléfono debe tener 10 dígitos.',
+        ];
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'countryCode' => ['required', 'string', 'regex:/^\+[0-9]{1,4}$/'],
             'telefono' => ['required', 'numeric', 'digits:10'],
-        ]);
+        ], $messages);
         if($request->countryCode != '+1') {
             $request->countryCode = $request->countryCode . '1'; 
         }
