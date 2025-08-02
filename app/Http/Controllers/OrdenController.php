@@ -87,7 +87,7 @@ class OrdenController extends Controller
             $user = Auth::user();
             if (!$user) {
                 DB::rollBack();
-                return redirect()->back()->with(['success' => false, 'message' => 'Necesita <a href="' . route('register') . '" class="font-bold underline text-blue-600 hover:text-blue-800">registrarse</a> o <a href="' . route('login') . '" class="font-bold underline text-blue-600 hover:text-blue-800">ingresar</a> para realizar ésta orden'])->withInput();
+                return redirect()->back()->with(['success' => false, 'message' => 'Necesita <a href="' . route('register') . '" class="font-bold underline text-blue-600 hover:text-blue-800">registrarse</a> o <a href="' . route('login') . '" class="font-bold underline text-blue-600 hover:text-blue-800">ingresar</a> para realizar éste movimiento'])->withInput();
             }
 
             // Validate all the possible forma fildos (all nullable except 'producto_id')
@@ -410,11 +410,14 @@ class OrdenController extends Controller
 
                 // Copiar las opciones del carrito a la orden
                 foreach ($cartItem->opciones as $cartOption) {
-                    OrdenProductoOpcion::create([
+                    $opcionOrdenProducto = OrdenProductoOpcion::create([
                         'order_product_id' => $orderProduct->id,
                         'option_name' => $cartOption->option_name,
                         'option_value' => $cartOption->option_value,
                     ]);
+                    if($opcionOrdenProducto->option_name == 'no_cotizacion' && $cartOption->option_value) {
+                        $orderProduct->cotizado = 1;
+                        $orderProduct->save();}
                 }
 
                 
@@ -450,7 +453,8 @@ class OrdenController extends Controller
             ]);
 
 
-        } catch (\Exception $e) {
+        } 
+        catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.'], 500);
         }

@@ -60,7 +60,6 @@ class landingController extends Controller
     public function updateSections(Request $request)
     {
         $updatedSections = [];
-        // Iterate over the keys in the request and set their boolean value
         $existingSections = $this->getSections(); // Get existing keys to ensure all are handled
 
         foreach ($existingSections as $key => $value) {
@@ -73,5 +72,20 @@ class landingController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Hubo un error al actualizar las secciones.');
         }
+    }
+    public function massMessageForm(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'service' => 'required|string|max:255',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        // Aquí puedes manejar el envío del mensaje masivo
+        // Por ejemplo, enviarlo a través de un servicio de correo
+
+        return redirect()->back()->with('success', 'Mensaje enviado correctamente.');
     }
 }

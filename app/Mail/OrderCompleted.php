@@ -41,7 +41,7 @@ class OrderCompleted extends Mailable
         return new Content(
             markdown: 'mail.orders.completed',
             with: [
-                'url' => route('admin.orders.details', $this->order->id),
+                'url' => route('user.dash'),
             ],
         );
     }

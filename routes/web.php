@@ -64,7 +64,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     // Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('admin.users.destroy');
 
     Route::get('/', function () {
-    return view('blank');});
+    return view('adminDash');});
 });
 
 
@@ -84,7 +84,7 @@ Route::prefix('carrito')->middleware(['auth'])->group(function (){
 });
 
 
-Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
+Route::prefix('user')->middleware(['auth'])->middleware('verified')->name('user.')->group(function () {
     Route::get('/dashboard', [UserController::class, 'loadDashboard'])->name('dash');
     Route::post('/update-profile', [UserController::class, 'updateProfile'])->name('update.profile');
     Route::post('/update-password', [UserController::class, 'updatePassword'])->name('update.password');
@@ -94,8 +94,8 @@ Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
 
 
 //activar middleware en éste
-Route::post('/ordenes/crear', [OrdenController::class, 'store'])->name('orders.store');
-Route::post('/ordenes/guardar', [OrdenController::class, 'storeCart'])->name('orders.storeCart');
+Route::post('/ordenes/crear', [OrdenController::class, 'store'])->name('orders.store')->middleware('auth')->middleware('verified');
+Route::post('/ordenes/guardar', [OrdenController::class, 'storeCart'])->name('orders.storeCart')->middleware('auth')->middleware('verified');
 
 Route::get('mail1',function(){
     $order = Orden::where('user_id', auth()->id())->latest()->first()->load(['product', 'user']);

@@ -56,7 +56,7 @@
                                         class="px-6 py-3 bg-white hover:bg-gray-100 text-mktPurple font-bold rounded-lg transition duration-300">
                                         Contáctanos <i class="fas fa-person-running ml-2"></i>
                                     </a>
-                                    <a href="#contacto"
+                                    <a href="{{ route('store.main') }}"
                                         class="px-6 py-3 bg-mktGreen hover:bg-gray-100 text-mktPurple font-bold rounded-lg transition duration-300">
                                         Tienda <i class="fas fa-store-alt ml-2"></i>
                                     </a>
@@ -168,42 +168,7 @@
                             </div>
                         </div>
 
-                        <div class="service-card rounded-xl p-8">
-                            <h3 class="text-2xl font-bold text-white mb-6">Envíanos un mensaje</h3>
-                            <form>
-                                <div class="mb-4">
-                                    <label for="name" class="block text-white font-medium mb-2">Nombre completo</label>
-                                    <input type="text" id="name" class="w-full bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="email" class="block text-white font-medium mb-2">Correo electrónico</label>
-                                    <input type="email" id="email" class="w-full bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="phone" class="block text-white font-medium mb-2">Teléfono</label>
-                                    <input type="tel" id="phone" class="w-full bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="service" class="block text-white font-medium mb-2">Servicio de interés</label>
-                                    <select id="service" class="w-full bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                                        <option value="">Selecciona un servicio</option>
-                                        <option value="sublimacion">Sublimación y grabado láser</option>
-                                        <option value="uniformes">Uniformes bordados</option>
-                                        <option value="diseño">Diseño web</option>
-                                        <option value="redes">Manejo de redes sociales</option>
-                                        <option value="impresion">Impresión publicitaria</option>
-                                        <option value="cursos">Cursos de capacitación</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="message" class="block text-white font-medium mb-2">Mensaje</label>
-                                    <textarea id="message" rows="4" class="w-full bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300"></textarea>
-                                </div>
-                                <button href="{{ route('login') }}" type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-300">
-                                    Enviar mensaje PERO MANDA A AUTH PRIMERO <i class="fas fa-paper-plane ml-2"></i>
-                                </button>
-                            </form>
-                        </div>
+                        @include('partials.global.massMessageForm')
                     </div>
                 </section>
 

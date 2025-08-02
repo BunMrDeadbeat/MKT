@@ -12,6 +12,8 @@ Fecha: {{ $order->created_at->format('d/m/Y') }}
 
 Total: ${{ number_format($order->monto, 2) }}
 
+Numero de Articulos: {{ $order->product->count() }}
+
 Puedes pasar a nuestra sucursal en el horario habitual. Si tu pedido requiere pago, puedes realizarlo al momento de la entrega.
 
 <x-mail::button :url="$url">

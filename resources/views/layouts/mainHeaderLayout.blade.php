@@ -31,10 +31,16 @@
                         </button>
                     </form>
                 @else
+                <div class="flex space-x-4">
                     <a href="{{ route('login') }}"
                         class="bg-mktGreen hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out inline-block">
                         Login
                     </a>
+                     <a href="{{ route('register') }}"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out inline-block">
+                        Registro
+                    </a>
+                </div>
                 @endauth
             </div>
             </div>

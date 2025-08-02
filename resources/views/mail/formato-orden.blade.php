@@ -56,7 +56,7 @@
             </div>
 
             <p style="text-align: center; margin-top: 30px;">
-                <a href="{{ route('main') }}" class="button" style="color: #ffffff; text-decoration: none !important;">
+                <a href="{{ route('user.dash') }}" class="button" style="color: #ffffff; text-decoration: none !important;">
                     ¡Revise el estado de su solicitud!
                 </a>
             </p>
