@@ -13,21 +13,19 @@
         <li><strong>Email:</strong> {{ $user->email }}</li>
         <li><strong>Teléfono:</strong> @php
     $telefono = $user->telefono;
-    $displayTelefono = $telefono; // Valor por defecto
+    $displayTelefono = $telefono; 
 
     if ($telefono && !str_starts_with($telefono, '+1')) {
-        // Primero, intenta hacer match con el formato de celular mexicano (+521... o 521...)
         $formatted = preg_replace('/^(\+?52)1(\d{10})$/', '$1$2', $telefono);
         
         if ($formatted !== $telefono) {
             $displayTelefono = $formatted;
         } 
-        // Si no, revisa si es un número de 11 dígitos que empieza con 1
         elseif (strlen($telefono) === 11 && str_starts_with($telefono, '1')) {
             $displayTelefono = substr($telefono, 1);
         }
     }
-    echo e($displayTelefono); // Imprime el número formateado de forma segura
+    echo e($displayTelefono); 
 @endphp
 </li>
     </ul>

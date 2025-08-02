@@ -4,11 +4,6 @@
 
     @section('content')
 
-         @if (session('error'))
-                                <script>
-                                    alert("{{ session('error') }}");
-                                </script>
-                            @endif
             <div class="floating-whatsapp">
                 <a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}" target="_blank"
                     class="bg-green-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
@@ -179,6 +174,8 @@
 
     @endsection
 @section('scripts')
+
+   <script src="{{ asset('js/modalhandler.js') }}"></script>
     <script>
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {

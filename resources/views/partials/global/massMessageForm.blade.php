@@ -37,7 +37,7 @@ $user = (auth()->check() && auth()->user()->hasVerifiedEmail()) ? auth()->user()
             <textarea id="message" rows="4" name="message"
                 class="w-full bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg px-4 py-3  placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-300"></textarea>
         </div>
-        <button href="{{ route('login') }}" type="submit"
+        <button formaction="{{ route('mass-message.send') }}" type="submit"
             class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-300">
             Enviar mensaje<i class="fas fa-paper-plane ml-2"></i>
         </button>

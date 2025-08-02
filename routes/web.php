@@ -121,7 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect()->route('home');
     })->name('dashboard');
 });
-
+Route::get('/mass-message', [landingController::class, 'massMessageForm'])->name('mass-message.send')->middleware('auth');
 Route::post('/whatsapp/incoming', [WhatsAppController::class, 'handleIncomingMessage']);
 
 require __DIR__.'/settings.php';

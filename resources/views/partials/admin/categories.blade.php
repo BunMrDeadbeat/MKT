@@ -1,15 +1,5 @@
 
-@if (session('success'))
-                            <script>
-                                alert("{{ session('success') }}");
-                            </script>
-                        @endif
-                        <!-- Check for general errors (from try-catch) -->
-                        @if (session('error'))
-                            <script>
-                                alert("{{ session('error') }}");
-                            </script>
-                        @endif
+
 <div class="container px-4 py-8 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-extrabold text-gray-900 leading-tight">Administrar Categorías</h2>

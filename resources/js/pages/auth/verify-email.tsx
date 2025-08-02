@@ -32,8 +32,8 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     Reenviar correo de verificación
                 </Button>
 
-                <TextLink href={route('logout')} method="post" className="mx-auto block text-sm">
-                    Cerrar sesión
+                <TextLink href={route('home')} method="get" className="mx-auto block text-sm">
+                     Volver
                 </TextLink>
             </form>
         </AuthLayout>

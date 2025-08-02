@@ -381,7 +381,7 @@ class OrdenController extends Controller
                 ->get();
 
             if ($cartItems->isEmpty()) {
-                return response()->json(['success' => false, 'message' => 'No se encontraron los artículos seleccionados en el carrito.'], 404);
+                return redirect()->back()->with(['success' => false, 'message' => 'No se encontraron los artículos seleccionados en el carrito.']);
             }
 
             $totalOrderPrice = 0;
@@ -456,7 +456,7 @@ class OrdenController extends Controller
         } 
         catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.'], 500);
+            return redirect()->back()->with(['success' => false, 'message' => 'Ocurrió un error al procesar su solicitud.']);
         }
     }
     private function sendWhatsAppNotification(string $recipientPhoneNumber, Orden $order)

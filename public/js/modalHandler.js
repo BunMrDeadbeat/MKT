@@ -24,7 +24,6 @@ async function fetchWithModal(url, options) {
         const response = await fetch(url, options);
         const data = await response.json();
 
-        // Si la respuesta JSON contiene un mensaje, lo mostramos en el modal
         if (data.message) {
             showGlobalModal(data.message, data.success ? 'success' : 'error');
         }

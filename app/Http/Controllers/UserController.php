@@ -85,14 +85,20 @@ class UserController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'telefono' => ['nullable', 'string', 'max:20'],
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'countryCode' => ['required', 'string', 'regex:/^\+[0-9]{1,4}$/'],
         ]);
-
+        if($request->countryCode != '+1') {
+            $request->countryCode = $request->countryCode . '1'; 
+        }
+        if($request->email !== $user->email) {
+            $user->email_verified_at = null;
+        }
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->telefono = $request->telefono;
+        $user->telefono = $request->countryCode . $request->telefono;
         $user->save();
 
         return back()->with('success', '¡Perfil actualizado con éxito!');

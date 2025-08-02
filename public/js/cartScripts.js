@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmOrderBtn = document.getElementById('confirm-order-btn');
 
     if (confirmOrderBtn) {
+        const buttonText = document.getElementById('button-text');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
         confirmOrderBtn.addEventListener('click', function () {
             const selectedItems = [];
             document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
@@ -31,6 +34,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const paymentMethod = paymentMethodInput.value;
             const notificationMethods = Array.from(notificationMethodInputs).map(checkbox => checkbox.value);
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            confirmOrderBtn.disabled = true;
+            buttonText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
 
             fetch('/solicitud/crear', {
                 method: 'POST',

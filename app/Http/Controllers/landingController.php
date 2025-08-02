@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Mail\MassMessageMail;
+use App\Models\AdministrativeNotificationRecipient;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
+use Mail;
 use phpDocumentor\Reflection\Types\This;
 
 class landingController extends Controller
@@ -75,17 +78,25 @@ class landingController extends Controller
     }
     public function massMessageForm(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'service' => 'required|string|max:255',
+        try{
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'nullable|string|numeric|max:20',
+                'service' => 'required|string|max:255',
             'message' => 'required|string|max:1000',
         ]);
 
-        // Aquí puedes manejar el envío del mensaje masivo
-        // Por ejemplo, enviarlo a través de un servicio de correo
+        $adminRecipients = AdministrativeNotificationRecipient::with('user')->get();
+            foreach ($adminRecipients as $recipient) {
+                if ($recipient->user && $recipient->user->email) {
+                  Mail::to($recipient->user->email)->send(new MassMessageMail($validated));
+            }
+        }
 
         return redirect()->back()->with('success', 'Mensaje enviado correctamente.');
+    } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Hubo un error al enviar el mensaje.' . $e->getMessage());
+        }   
     }
 }

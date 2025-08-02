@@ -13,17 +13,6 @@
                             <i class="fas fa-plus mr-2"></i> Nuevo Producto
                         </button>
                     </div>
-                        @if (session('success'))
-                            <script>
-                                alert("{{ session('success') }}");
-                            </script>
-                        @endif
-                        <!-- Check for general errors (from try-catch) -->
-                        @if (session('error'))
-                            <script>
-                                alert("{{ session('error') }}");
-                            </script>
-                        @endif
                     <!-- Product Search and Filters -->
                 @include('partials.productSearchAndFiltersAdmin')
                 @include('partials.productsAdminTable')
