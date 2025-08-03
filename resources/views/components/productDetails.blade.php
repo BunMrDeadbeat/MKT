@@ -50,16 +50,16 @@
 
         <div class="flex flex-col md:flex-row gap-4 mb-6">
             {{-- Button 1: Submits to the 'orders.buyNow' route --}}
-        <button type="submit"
+        {{-- <button type="submit"
                 formaction="{{ route('orders.store') }}"
                 class="bg-primary hover:bg-purple-800 text-white py-3 px-6 rounded-lg font-bold flex-1 flex items-center justify-center space-x-2">
             <span>Ordenar ya</span>
-        </button>
+        </button> --}}
         
         {{-- Button 2: Submits to the 'cart.add' route --}}
         <button type="submit"
                 formaction="{{ route('orders.storeCart') }}"
-                class="bg-green-700 hover:bg-mktGreen text-white py-3 px-6 rounded-lg font-bold flex-1 flex items-center justify-center space-x-2">
+                class="bg-green-700 hover:bg-mktGreen text-white py-3 px-6 rounded-lg font-bold flex-1 flex items-center justify-center space-x-2 h-20">
                 
             <i class="fas fa-shopping-cart"></i>
             <span>Agregar al carrito</span>
