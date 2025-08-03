@@ -110,11 +110,11 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-8">
-               {{-- INICIO DE LA NUEVA SECCIÓN DE ÓRDENES CON MODAL --}}
+             
 <div x-data="orderModal()">
-    <section class="bg-gray-800 p-6 rounded-lg shadow-md">
+    <section class="bg-gray-800 p-6 rounded-lg shadow-md relative">
         <h2 class="text-2xl font-semibold mb-4 text-gray-200">Mis Órdenes</h2>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto [mask-image:linear-gradient(to_right,rgba(0,0,0,1)_85%,rgba(0,0,0,0))]">
             <table class="min-w-full divide-y divide-gray-700">
                 <thead class="bg-gray-700/50">
                     <tr>
@@ -296,11 +296,25 @@
                                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="mt-1 block w-full rounded-md shadow-sm p-2">
                                 @error('email') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
                             </div>
-                            <div>
-                                <label for="telefono" class="block text-sm font-medium text-gray-400">Teléfono</label>
-                                <input type="tel" name="telefono" id="telefono" value="{{ old('telefono', $user->telefono) }}" class="mt-1 block w-full rounded-md shadow-sm p-2">
-                                 @error('telefono') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                            </div>
+                            {{-- This replaces your old 'telefono' div --}}
+<div>
+    <label for="telefono" class="block text-sm font-medium text-gray-400">Teléfono</label>
+    <div class="mt-1 flex items-center gap-2">
+        {{-- Country Code Selector --}}
+        <select name="countryCode" id="countryCode" class="w-1/3 rounded-md shadow-sm p-2" value="+52">
+            
+        </select>
+
+        {{-- Phone Number Input --}}
+        <input type="tel" name="telefono" id="telefono" 
+               value="{{ old('telefono', substr(preg_replace('/\D/', '', $user->telefono ?? ''), -10))  }}" 
+               placeholder="10 dígitos" 
+               maxlength="10" 
+               class="block w-2/3 rounded-md shadow-sm p-2">
+    </div>
+    @error('countryCode') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
+    @error('telefono') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
+</div>
                             <div class="text-right">
                                 <button type="submit" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-violet-700 transition-colors">
                                     Guardar Cambios
@@ -371,5 +385,6 @@ function orderModal() {
     }
 }
 </script>
+<script type="module" src="{{ asset('js/profilescripts.js') }}"></script>
 </body>
 </html>

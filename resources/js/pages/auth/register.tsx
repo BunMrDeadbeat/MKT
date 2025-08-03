@@ -8,6 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+
+import { countries } from '@/lib/country-codes'; 
 
 type RegisterForm = {
     name: string;
@@ -76,21 +85,27 @@ export default function Register() {
                     <div className="grid gap-2">
                         <Label htmlFor="telefono movil">Teléfono</Label>
                         <div className="flex items-start gap-2">
-                            <div className="w-1/4">
-                                <Input
-                                    id="countryCode"
-                                    type="text"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="tel-country-code"
+                           <div className="w-1/3">
+                                <Select
                                     value={data.countryCode}
-                                    onChange={(e) => setData('countryCode', e.target.value)}
+                                    onValueChange={(value) => setData('countryCode', value)}
                                     disabled={processing}
-                                    placeholder="+52"
-                                />
+                                    required
+                                >
+                                    <SelectTrigger id="countryCode" tabIndex={3}>
+                                        <SelectValue placeholder="Código" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {countries.map((country) => (
+                                            <SelectItem key={country.code} value={country.dial_code}>
+                                                {country.name} ({country.dial_code})
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <InputError message={errors.countryCode} className="mt-2" />
                             </div>
-                            <div className="w-3/4">
+                            <div className="w-2/3">
                                 <Input
                                     id="telefono"
                                     type="tel"
@@ -100,7 +115,7 @@ export default function Register() {
                                     value={data.telefono}
                                     onChange={(e) => setData('telefono', e.target.value)}
                                     disabled={processing}
-                                    placeholder="10 dígitos"
+                                    placeholder="10 dígitos (6313144545)"
                                     maxLength={10}
                                 />
                                 <InputError message={errors.telefono} className="mt-2" />

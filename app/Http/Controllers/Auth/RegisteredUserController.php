@@ -43,6 +43,7 @@ class RegisteredUserController extends Controller
             'email.unique' => 'Este correo electrónico ya está en uso.',
             'password.required' => 'El campo contraseña es obligatorio.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'countryCode.required' => 'El código de país es obligatorio.',
             'countryCode.string' => 'El código de país debe ser una cadena de texto.',
             'countryCode.regex' => 'El formato del código de país no es válido. Ejemplo: +52',

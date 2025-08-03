@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -21,9 +21,10 @@
 
 
 
-     <x-global-alert-modal />
 
-    @if (session('success') || session('error') || session('info') || $errors->any())
+
+    @if (session('success') || session('error') || session('info') || $errors->any())+
+         <x-global-alert-modal />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             window.dispatchEvent(new CustomEvent('show-modal', {

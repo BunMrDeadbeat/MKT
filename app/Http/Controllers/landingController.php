@@ -82,7 +82,7 @@ class landingController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
-                'phone' => 'nullable|string|numeric|max:20',
+                'phone' => 'nullable|string|max:20',
                 'service' => 'required|string|max:255',
             'message' => 'required|string|max:1000',
         ]);
@@ -93,10 +93,11 @@ class landingController extends Controller
                   Mail::to($recipient->user->email)->send(new MassMessageMail($validated));
             }
         }
+        
 
-        return redirect()->back()->with('success', 'Mensaje enviado correctamente.');
+        return redirect()->route('main')->with('success', '¡Mensaje enviado!.');
     } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Hubo un error al enviar el mensaje.' . $e->getMessage());
+            return redirect()->route('main')->with('error', 'Hubo un error al enviar el mensaje. ' . $e->getMessage());
         }   
     }
 }

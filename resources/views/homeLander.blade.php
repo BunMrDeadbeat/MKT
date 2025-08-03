@@ -175,7 +175,6 @@
     @endsection
 @section('scripts')
 
-   <script src="{{ asset('js/modalhandler.js') }}"></script>
     <script>
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -186,7 +185,15 @@
                 });
             });
         });
-    </script>  
+    </script> 
+    <script>
+      const menuBtn = document.getElementById('menu-btn');
+      const menu = document.getElementById('menu');
+
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+    </script> 
     @endsection
 
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -80,25 +81,29 @@ class UserController extends Controller
         return response()->json($user->load('roles'));
     }
 
-     public function updateProfile(Request $request)
+    public function updateProfile(Request $request)
     {
         $user = Auth::user();
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'countryCode' => ['required', 'string', 'regex:/^\+[0-9]{1,4}$/'],
+            'telefono' => 'required|string|regex:/^\d{10}$/',
         ]);
         if($request->countryCode != '+1') {
             $request->countryCode = $request->countryCode . '1'; 
         }
         if($request->email !== $user->email) {
             $user->email_verified_at = null;
+            $user->email = $request->email;
         }
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->telefono = $request->countryCode . $request->telefono;
+        if($user->name !== $request->name) {
+            $user->name = $request->name;
+        }
+        if($user->telefono !== $request->countryCode . $request->telefono) {
+            $user->telefono = $request->countryCode . $request->telefono;
+        }
         $user->save();
 
         return back()->with('success', '¡Perfil actualizado con éxito!');
