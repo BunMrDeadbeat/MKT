@@ -13,6 +13,7 @@ class CategoriesSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('categories')->truncate();
         $cats=[
             [
                 'name' =>  'publicidad'

@@ -1,4 +1,4 @@
-<section id="servicios" class="mt-12 max-w-12xl mx-auto px-6">
+<section id="servicios" class="mt-12 max-w-12xl mb-2 mx-auto px-6">
                     <div class="text-center mb-12">
                         <h2 class="text-4xl font-bold text-white mb-4">Servicios de <span
                                 class="text-mktGreen">Publicidad</span></h2>

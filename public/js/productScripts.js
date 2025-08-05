@@ -168,7 +168,7 @@
         }
         
         function showNewThumbAlertMessage() {
-            alert("Alerta. primero deben de guardarse las imagenes nuevas para usarlas como thumbnail");
+            alert("Alerta. primero deben de guardarse las imagenes nuevas para usarlas como thumbnail, si no hay thumbnail, se usara la primera imagen de la galeria como thumbnail.");
         }
 
         

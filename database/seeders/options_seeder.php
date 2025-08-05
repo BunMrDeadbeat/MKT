@@ -13,6 +13,7 @@ class options_seeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('options')->truncate();
         $options = [
 
        [
@@ -140,9 +141,9 @@ class options_seeder extends Seeder
 
          'id' => 11,
 
-         'name' => 'Revisar y cotizar antes de pago',
+         'name' => 'Pago Directo',
 
-         'description' => 'Desactivar ésta opción si se desea activar pagos directos para el pedido y saltar el proceso de revisión y cotización.',
+         'description' => 'Activar ésta opción si se desea activar pagos directos para el pedido y saltar el proceso de revisión y cotización.',
 
          'is_active' => true,
 

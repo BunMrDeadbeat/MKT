@@ -117,6 +117,11 @@
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
 }
+.filter-btn.active {
+            background-color: #3B82F6; /* bg-blue-600 */
+            color: white;
+            font-weight: 600;
+        }
 .flex-container {
   display: flex;
   justify-content: flex-end; /* Pushes child items to the right */

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\dashController;
 use App\Http\Controllers\landingController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
@@ -19,6 +20,11 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
 
     Route::get('/landing', [landingController::class, 'editSections'])->name('admin.lander');
     Route::put('/landing', [landingController::class, 'updateSections'])->name('sections.update');
+    Route::get('/partners', [landingController::class, 'editPartners'])->name('admin.partners');
+    Route::post('/partners', [landingController::class, 'storePartner'])->name('partners.store');
+    Route::delete('/partners/{filename}', [landingController::class, 'destroyPartner'])->name('partners.destroy');
+
+
     
     Route::get('/ordenes', [OrdenController::class, 'loadOrdersAdmin'])->name('admin.orders');
     Route::get('/ordenes/{orden}/details', [OrdenController::class, 'show'])->name('admin.orders.details');
@@ -63,8 +69,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     // Route::put('/users/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('admin.users.update');
     // Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])->name('admin.users.destroy');
 
-    Route::get('/', function () {
-    return view('adminDash');});
+    Route::get('/', [dashController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard', [OptionController::class, 'index'])->name('admin.dash');
+    Route::get('/orders-chart-data', [dashController::class, 'ordersChartData'])->name('admin.orders.chart.data');
 });
 
 

@@ -68,35 +68,35 @@
                 </section>
 
 
-                @if (isset($sections['productCards']) && $sections['productCards'])
+                @if ($sections->contains('name', 'productCards'))
                 @include('partials.lander.productCards')
                 @endif
 
-                @if (isset($sections['impresion']) && $sections['impresion'])
+                @if ($sections->contains('name', 'impresion'))
                 @include('partials.lander.impresion')
                 @endif
 
-                @if (isset($sections['puntosVenta']) && $sections['puntosVenta'])
+                @if ($sections->contains('name', 'puntosVenta'))
                 @include('partials.lander.puntosVenta')
                 @endif
 
-                @if (isset($sections['displayCursos']) && $sections['displayCursos'])
+                @if ($sections->contains('name', 'displayCursos'))
                 @include('partials.lander.displayCursos')
                 @endif
 
-                @if (isset($sections['webDev']) && $sections['webDev'])
+                @if ($sections->contains('name', 'webDev'))
                 @include('partials.lander.webDev')
                 @endif
 
-                @if (isset($sections['partners']) && $sections['partners'])
+                @if ($sections->contains('name', 'partners'))
                 @include('partials.lander.partners')
                 @endif
 
-                @if (isset($sections['experience']) && $sections['experience'])
+                @if ($sections->contains('name', 'experience'))
                 @include('partials.lander.experience')
                 @endif
 
-                @if (isset($sections['plans']) && $sections['plans'])
+                @if ($sections->contains('name', 'plans'))
                 @include('partials.lander.plans')
                 @endif
 

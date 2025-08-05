@@ -15,11 +15,10 @@ class DatabaseSeeder extends Seeder
     {
          $this->call([
         options_seeder::class,
-        ]);
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        CategoriesSeeder::class,
+        RoleSeeder::class,
+        LanderSectionSeeder::class,
+        AdminUserSeeder::class,
+    ]);
     }
 }

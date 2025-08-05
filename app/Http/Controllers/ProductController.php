@@ -199,7 +199,18 @@ class ProductController extends Controller
                 foreach ($request->file('gallery') as $file) {
                     $path = $file->store('products/gallery', 'public');
                     $product->galleries()->create(['image' => $path, 'is_featured' => false]);
+                }
             }
+            if (!isset($validated['featured_gallery_id'])) {
+                $hasFeaturedImage = $product->galleries()->where('is_featured', true)->exists();
+                if (!$hasFeaturedImage) {
+                    $firstGalleryItem = $product->galleries()->orderBy('id', 'asc')->first();
+
+                    if ($firstGalleryItem) {
+                        $firstGalleryItem->is_featured = true;
+                        $firstGalleryItem->save();
+                    }
+                }
             }
             $deleteGalleryIds = $request->input('delete_gallery', []);
             if (!empty($deleteGalleryIds)) {

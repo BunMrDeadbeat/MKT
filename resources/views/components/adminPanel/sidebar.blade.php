@@ -28,6 +28,11 @@
           <i class="fas fa-plane-arrival fa-fw mr-3"></i>
           <span class="nav-text">Landing Page</span>
         </a>
+        <a href="{{ route('admin.partners') }}" 
+           class="flex items-center px-3 py-2.5 rounded-md transition-colors duration-200 hover:bg-white/10 {{ request()->routeIs('admin.partners') ? 'bg-white/20' : '' }}">
+          <i class="fas fa-handshake fa-fw mr-3"></i>
+          <span class="nav-text">Logos de Clientes Destacados</span>
+        </a>
       </div>
       
       <div class="mt-4">
