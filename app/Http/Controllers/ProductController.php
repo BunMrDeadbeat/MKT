@@ -64,36 +64,7 @@ class ProductController extends Controller
         return view('adminProducts', compact('options', 'categorias','editProduct', 'products','showedit','headerTitle'));
     }
 
-    public function loadAddServices()
-    {
-        $headerTitle = 'Servicios';
-        $categorias = Category::all();
-        $services = Product::with('options')->where('type','service')->paginate(15);
-        return view('partials.admin.services', compact( 'categorias', 'services','headerTitle'));
-    }
-    public function storeService(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'description' => 'nullable|string',
-        ]);
-
-        $service = Product::create([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'price' => $request->price,
-            'description' => $request->description,
-            'type' => 'service',
-        ]);
-
-        if ($request->has('price')) {
-            $service->options()->sync([11]);
-        }
-
-        return redirect()->route('admin.services.index')->with('success', 'Servicio creado exitosamente.');
-    }
+    
     public function loadStore()
     {
         $categorias = Category::all();

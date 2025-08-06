@@ -6,6 +6,7 @@ use App\Http\Controllers\dashController;
 use App\Http\Controllers\landingController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\WhatsAppController;
@@ -49,7 +50,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     Route::delete('/categories/bye/{category}', [CategoriesController::class, 'destroy'])->name('admin.categories.destroy');
     Route::put('/categories/edit/{category}', [CategoriesController::class, 'update'])->name('admin.categories.update');
 
-    Route::get('/servicios', [ProductController::class, 'loadAddServices'])->name('admin.services');
+
+    Route::get('/services', [ServiceController::class, 'index'])->name('admin.services.index');
+    Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
+
+
     Route::get('/productos', [ProductController::class, 'loadAddProducts'])->name('admin.products');
     Route::post('/productos/add', [ProductController::class, 'store'])->name('products.store');
     Route::put('/productos/edit/{id}', [ProductController::class, 'update'])->name('products.update');

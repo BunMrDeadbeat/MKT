@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold mb-6">Gestión de Opciones de Productos</h1>
 
 
-        @if (!$editMode)
+        {{-- @if (!$editMode)
             <div class="bg-white p-6 rounded-lg shadow-md mb-8">
                 <h2 class="text-2xl font-semibold mb-4">Agregar Nueva Opción</h2>
                 <form action="{{ route('admin.options.store') }}" method="POST">
@@ -36,7 +36,7 @@
                     </div>
                 </form>
             </div>
-        @endif
+        @endif --}}
 
         <div class="bg-white p-6 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-4">
@@ -56,7 +56,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Productos Asignados</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                            {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th> --}}
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -86,7 +86,6 @@
                                             <span class="px-2 inline-flex text-md leading-5 font-semibold {{ $option->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                 {{ $option->is_active ? 'Activa' : 'Inactiva' }}
                                             </span>
-                                            <a>hola</a>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">
@@ -97,11 +96,11 @@
                                             <button type="submit" class="text-indigo-600 hover:text-indigo-900 mr-4"><i class="fas fa-save"></i> Guardar</button>
                                         @endif
                                 </form>
-                                        <form action="{{ route('admin.options.destroy', $option) }}" method="POST" class="inline-block">
+                                        {{-- <form action="{{ route('admin.options.destroy', $option) }}" method="POST" class="inline-block">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Estás seguro? Se eliminará la opción de todos los productos que la contengan.');"><i class="fas fa-trash"></i> Eliminar</button>
-                                        </form>
+                                        </form> --}}
                                     </td>
                             </tr>
                         @empty
