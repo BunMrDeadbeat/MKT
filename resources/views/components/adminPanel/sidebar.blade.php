@@ -42,6 +42,11 @@
           <i class="fas fa-box fa-fw mr-3"></i>
           <span class="nav-text">Productos</span>
         </a>
+        <a href="{{ route('admin.services') }}" 
+           class="flex items-center px-3 py-2.5 rounded-md transition-colors duration-200 hover:bg-white/10 {{ request()->routeIs('admin.services') ? 'bg-white/20' : '' }}">
+          <i class="fas fa-flask fa-fw mr-3"></i>
+          <span class="nav-text">Servicios</span>
+        </a>
         <a href="{{ route('admin.categories') }}" 
            class="flex items-center px-3 py-2.5 rounded-md transition-colors duration-200 hover:bg-white/10 {{ request()->routeIs('admin.categories') ? 'bg-white/20' : '' }}">
           <i class="fas fa-tags fa-fw mr-3"></i>

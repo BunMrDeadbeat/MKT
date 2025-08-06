@@ -32,6 +32,14 @@
 
     <h2>Detalles de la Orden</h2>
     <table border="1" cellpadding="10" cellspacing="0" style="width: 100%;">
+        @if ($order->product->count()==1 && $order->product->first()->producto->type=='service')
+            <thead>
+            <tr>
+                <th>Servicio Solicitado</th>
+            </tr>
+        </thead>
+        @else
+        
         <thead>
             <tr>
                 <th>Producto</th>
@@ -40,8 +48,27 @@
                 <th>Subtotal</th>
             </tr>
         </thead>
+        @endif
         <tbody>
             @foreach ($order->product as $item)
+                @if ($item->producto->type=='service')
+                    <td>{{ $item->producto->name }}
+                        @if ($item->opciones->count() > 0)
+                            <br>
+                            <small>
+                                <ul>
+                                    @foreach ($item->opciones as $opcion)
+                                        @if($opcion->option_name=='no_cotizacion')
+                                            @continue
+                                        @endif
+                                        <li><strong>{{ $opcion->option_name }}:</strong> {{ $opcion->option_value }}</li>
+                                    @endforeach
+                                </ul>
+                            </small>
+                        @endif
+                    </td>
+                    @continue
+                @endif
                 <tr>
                     <td>{{ $item->producto->name }}
                         @if ($item->opciones->count() > 0)

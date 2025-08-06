@@ -21,14 +21,14 @@ class FormatoOrden extends Mailable
      *
      * @var \App\Models\Orden
      */
-    public $order; // Declare a public property to hold the order
+    public $order;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Orden $order) // Inject the Order model
+    public function __construct(Orden $order)
     {
-        $this->order = $order; // Assign the injected order to the public property
+        $this->order = $order; 
     }
 
     /**
@@ -52,9 +52,9 @@ class FormatoOrden extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.formato-orden', // Blade view for the email content
+            view: 'mail.formato-orden', 
             with: [
-                'order' => $this->order, // Pass the order object to the view
+                'order' => $this->order, 
             ],
         );
     }

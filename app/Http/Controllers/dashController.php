@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\CartProduct;
 use App\Models\Orden;
+use App\Models\OrdenProducto;
 use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
@@ -25,14 +28,38 @@ class dashController extends Controller
         $totalEarnings = Orden::where('pagado', '1')
                               ->where('created_at', '>=', Carbon::now()->subMonths(3))
                               ->sum('monto');
+        $mostAddedProductsData = OrdenProducto::query()
+            ->select('products.name as product_name', DB::raw('count(orders_products.product_id) as total'))
+            ->join('products', 'products.id', '=', 'orders_products.product_id')
+            ->groupBy('products.name')
+            ->orderBy('total', 'desc')
+            ->limit(10)
+            ->get();
+            $productLabels = $mostAddedProductsData->pluck('product_name');
+            $productTotals = $mostAddedProductsData->pluck('total');
 
-        // Pasa los datos a la vista
+        $topCarts = Cart::with(['usuario', 'productos'])
+            ->where('updated_at', '>=', Carbon::now()->subWeek())
+            ->where('total_price', '>', 0)
+            ->orderByDesc('total_price')
+            ->take(5)
+            ->get();
+
+        $topCartsLabels = $topCarts->map(function($cart) {
+            return optional($cart->usuario)->name;
+        });
+        $topCartsTotals = $topCarts->pluck('total_price');
+
         return view('adminDash', [
             'totalUsers' => $totalUsers,
             'totalEarnings' => $totalEarnings,
             'totalActiveProducts' => $totalActiveProducts,
             'totalOrders' => $totalOrders,
-            'recentOrders' => $recentOrders
+            'recentOrders' => $recentOrders,
+            'productLabels' => $productLabels,
+            'productTotals' => $productTotals,
+            'topCartsLabels' => $topCartsLabels,
+            'topCartsTotals' => $topCartsTotals,
         ]);
     }
 
@@ -80,7 +107,6 @@ class dashController extends Controller
             ->get()
             ->groupBy('date');
 
-        // Preparar los datasets para la gráfica
         $dataByStatus = [];
         foreach ($statuses as $status) {
             $dataByStatus[$status] = [];
@@ -90,23 +116,18 @@ class dashController extends Controller
             $formattedDate = $date->format(str_replace('%', '', $dateFormat));
             $labels[] = $date->format($labelFormat);
 
-            // Verificamos si existen datos para esta fecha en los resultados de la BD
             if (isset($ordersData[$formattedDate])) {
-                // Si hay datos, los procesamos como antes
                 $dayData = $ordersData[$formattedDate];
                 foreach ($statuses as $status) {
-                    // Buscamos el recuento para el estado actual. Si no se encuentra, es 0.
                     $dataByStatus[$status][] = $dayData->where('status', $status)->first()->count ?? 0;
                 }
             } else {
-                // Si no hay datos para esta fecha, el recuento para todos los estados es 0
                 foreach ($statuses as $status) {
                     $dataByStatus[$status][] = 0;
                 }
             }
         }
         
-        // Estructurar los datasets finales con sus colores
         $datasets = [
             ['label' => 'Pendiente', 'data' => $dataByStatus['pendiente'], 'borderColor' => '#F97316', 'backgroundColor' => '#F9731620', 'tension' => 0.4],
             ['label' => 'Procesando', 'data' => $dataByStatus['procesando'], 'borderColor' => '#3B82F6', 'backgroundColor' => '#3B82F620', 'tension' => 0.4],

@@ -2,9 +2,9 @@
     @foreach($productos as $product)
 
                     @php
-        $featuredGallery = $product->galleries->firstWhere('is_featured', 1);
+                $featuredGallery = $product->galleries->firstWhere('is_featured', 1);
                     @endphp
-
+                    {{-- @if ($featuredGallery && $featuredGallery->image && $product->status === 'active') --}}
                     @if ($featuredGallery && $featuredGallery->image && $product->status === 'active')
                         <div class="bg-white rounded-lg  overflow-hidden hover:shadow-lg transition-all w-full sm:w-60 flex-shrink-0 h-120 flex flex-col shadow-lg shadow-neutral-800">
                             <a href="{{ route('products.show', $product->slug) }}">
@@ -29,6 +29,10 @@
                                                     </div>
                                             @endif
 
+                                        @elseif ($product->price>0)
+                                        <div class="flex justify-between items-center m-2">
+                                            <span class="text-primary font-bold">¡Disponible por <span class="text-mktGreen">${{ $product->price }}!</span></span>
+                                        </div>
                                         @else
                                         <div class="flex justify-between items-center m-2">
                                             <span class="text-primary font-bold">Cotización disponible!</span>

@@ -22,7 +22,7 @@ class ProductController extends Controller
             ->with(['category',
              'galleries',
               'options'=> function($query) {
-                $query->orderBy('id', 'asc'); // id ascendente para mantener el orden en la vista
+                $query->orderBy('id', 'asc');
             }
               ])
             ->firstOrFail();
@@ -59,15 +59,45 @@ class ProductController extends Controller
         $editProduct = null;
         $options = Option::where('is_active', true)->get();
         $categorias = Category::all();
-        $products = Product::with('options')->paginate(15);
+        $products = Product::with('options')->where('type','product')->paginate(15);
         $showedit='hidden';
         return view('adminProducts', compact('options', 'categorias','editProduct', 'products','showedit','headerTitle'));
     }
 
+    public function loadAddServices()
+    {
+        $headerTitle = 'Servicios';
+        $categorias = Category::all();
+        $services = Product::with('options')->where('type','service')->paginate(15);
+        return view('partials.admin.services', compact( 'categorias', 'services','headerTitle'));
+    }
+    public function storeService(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+        ]);
+
+        $service = Product::create([
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'price' => $request->price,
+            'description' => $request->description,
+            'type' => 'service',
+        ]);
+
+        if ($request->has('price')) {
+            $service->options()->sync([11]);
+        }
+
+        return redirect()->route('admin.services.index')->with('success', 'Servicio creado exitosamente.');
+    }
     public function loadStore()
     {
         $categorias = Category::all();
-        $productos = Product::with('options')->paginate(20);
+        $productos = Product::with('options')->paginate(10);
         return view('store', compact( 'categorias', 'productos'));
     }
     public function filterByCategory($categoryId)

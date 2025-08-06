@@ -43,11 +43,19 @@ foreach ($otherGalleries as $gallery) {
                 <x-serviceGallery 
                 :thumbnail="$featuredGallery->image"
                 :images="$galleryImageUrls" />
-                
+                @php
+                    $hasPrice = false;
+                    if($product->price!=null && $product->price > 0){
+                        $hasPrice = true;
+                    }
+                @endphp
                 <x-serviceDetails 
                     :title="$product->name"
                     :price="$product->price"
-                    :description="$product->description"/>
+                    :description="$product->description"
+                    :serviceId="$product->id"
+                    :hasprice="$hasPrice"
+                    />
             </div>
         </div>
     </section>
@@ -73,7 +81,9 @@ foreach ($otherGalleries as $gallery) {
                
             });
         </script>
-        <script src = "{{ asset('js/productDetail.js') }}" defer>
-        </script>
+        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+        <script src ="{{ asset('js/GlobalAlert.js') }}" defer></script>
+        <script src = "{{ asset('js/productDetail.js') }}" defer></script>
+        
 
     @endsection

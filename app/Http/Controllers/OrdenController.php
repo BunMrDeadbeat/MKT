@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\FormatoOrden;
 use App\Mail\AdminOrderNotification;
+use App\Mail\FormatoSolicitudServicio;
 use App\Models\AdministrativeNotificationRecipient;
 use App\Models\Cart;
 use App\Models\CartProduct;
@@ -20,11 +21,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Monolog\Handler\IFTTTHandler;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
 use App\Mail\OrderCompleted;
+use App\Http\Controllers\WhatsAppController; 
 
 class OrdenController extends Controller
 {
@@ -234,38 +237,6 @@ class OrdenController extends Controller
         
         
     }
-    public function crear(Request $request)
-    {
-        dd($request->all());
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
-        }
-
-        $data = $request->all();
-        $opciones = json_encode($data); // Convertir datos a JSON
-
-        $orden = Orden::create([
-            'user_id' => $user->id,
-            'producto_id' => $data['producto_id'],
-            'opciones_personalizacion' => $opciones,
-            'monto' => null, // Agrega lógica para calcular el monto si aplica
-        ]);
-
-        return response()->json(['success' => true, 'orden' => $orden]);
-    }
-    public function obtenerCantidadTotalProductos()
-    {
-        $user = Auth::user();
-        $carrito = Cart::where('user_id', $user->id)->where('status', 'activo')->first();
-
-        $totalCantidad = 0;
-        if ($carrito) {
-            // Asumiendo que la relación se llama 'productos' y tiene el campo 'cantidad'
-            $totalCantidad = $carrito->productos->sum('cantidad');
-        }
-        // $totalCantidad ahora contiene la suma total de productos en el carrito del usuario
-    }
 
     public function loadCart()
     {
@@ -355,6 +326,84 @@ class OrdenController extends Controller
             'newItemPrice' => number_format($cartProduct->unit_price * $cartProduct->quantity, 2)
         ]);
     }
+    public function storeServiceSolicitation(Request $request, Product $servicio, WhatsAppController $whatsAppController){
+         $rules = [
+        'company_name'    => 'required|string|max:255',
+        'company_field'   => 'required|string|max:255',
+        'company_role'    => 'required|string|max:255',
+        'company_size'    => ['required', 'string', Rule::in(['1-10 empleados', '11-50 empleados', '51-200 empleados', '201-500 empleados', '+500 empleados'])],
+        'website'         => 'nullable|url|max:255',
+        'project_details' => 'required|string|max:5000',
+        'budget'          => ['required', 'string', Rule::in(['A discutir', 'Menos de $10,000', '$10,000 - $40,0000', '$40,0000 - $200,000', 'Más de $200,000'])],
+        'urgency'         => ['required', 'string', Rule::in(['Baja', 'Media', 'Alta', 'Inmediata'])],
+        ];
+            $validated = $request->validate($rules);
+
+        try {
+
+        $user = auth()->user();
+         $fieldLabels = [
+        'company_name'    => 'Nombre de la empresa',
+        'company_field'   => 'Giro de la empresa',
+        'company_role'    => 'Puesto en la Empresa',
+        'company_size'    => 'Tamaño de la Empresa',
+        'website'         => 'Sitio Web Actual y/o Red Social Principal',
+        'project_details' => 'Principal desafío o proyecto',
+        'budget'          => 'Presupuesto Estimado',
+        'urgency'         => 'Nivel de Urgencia',
+        ];
+
+        Log::info('Nueva solicitud de servicio validada:', $validated);
+        DB::beginTransaction();
+
+        $order = Orden::create([
+                'user_id' => $user->id,
+                'status' => 'pendiente',
+                'metodo_pago' => 'A discutir',
+            ]);
+        $orderProduct = OrdenProducto::create([
+                    'order_id' => $order->id,
+                    'product_id' => $servicio->id,
+                    'cantidad' => 1,
+                    'precio_unitario' => $servicio->precio ?? 0,
+            ]);
+            foreach ($validated as $key => $value) {
+                if (isset($fieldLabels[$key]) && $value !== null) {
+                    OrdenProductoOpcion::create([
+                        'order_product_id' => $orderProduct->id,
+                        'option_name'      => $fieldLabels[$key],
+                        'option_value'     => $value,
+                    ]);
+                }
+            }
+        DB::commit();
+
+        
+            
+        Mail::to($user->email)->send(new FormatoSolicitudServicio($order));
+            
+        $whatsAppController->sendWhatsAppServiceNotification($order->user->telefono, $order);
+
+        $adminRecipients = AdministrativeNotificationRecipient::with('user')->get();
+            foreach ($adminRecipients as $recipient) {
+                if ($recipient->user && $recipient->user->email) {
+                    Mail::to($recipient->user->email)->send(new AdminOrderNotification($order, $user));
+                }
+            }
+        return response()->json([
+            'success' => true,
+            'message' => '¡Solicitud enviada con éxito!'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Error al procesar la solicitud: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Ocurrió un error al procesar la solicitud.'
+        ], 500);
+    }
+    }
 
     public function crearDesdeCarrito(Request $request)
     {
@@ -391,16 +440,15 @@ class OrdenController extends Controller
             } elseif($paymentMethod === 'recolecta') {
                 $paymentMethod = 'Pago en Tienda';
             }
-            // Crear la orden principal
             $order = Orden::create([
                 'user_id' => $user->id,
-                'status' => 'pendiente', // O cualquier otro estado inicial
+                'status' => 'pendiente', // O cualquier otro estado inicial, no importa ajahkj
                 'metodo_pago' => $paymentMethod,
             ]);
 
             foreach ($cartItems as $cartItem) {
                 $totalOrderPrice += $cartItem->unit_price * $cartItem->quantity;
-                // Crear el producto de la orden
+             
                 $orderProduct = OrdenProducto::create([
                     'order_id' => $order->id,
                     'product_id' => $cartItem->product_id,
@@ -408,7 +456,7 @@ class OrdenController extends Controller
                     'precio_unitario' => $cartItem->unit_price,
                 ]);
 
-                // Copiar las opciones del carrito a la orden
+              
                 foreach ($cartItem->opciones as $cartOption) {
                     $opcionOrdenProducto = OrdenProductoOpcion::create([
                         'order_product_id' => $orderProduct->id,
@@ -419,17 +467,12 @@ class OrdenController extends Controller
                         $orderProduct->cotizado = 1;
                         $orderProduct->save();}
                 }
-
-                
-                // Eliminar el artículo del carrito
                 $cartItem->delete();
             }
 
-            // Actualizar el precio total del carrito
             $cart->total_price -= $totalOrderPrice;
             $cart->save();
             
-            // Aquí puedes añadir la lógica para generar formatos, como enviar un correo de confirmación.
             $order->load('user', 'product.producto', 'product.opciones');
             DB::commit();
 
@@ -471,9 +514,9 @@ class OrdenController extends Controller
         Log::info('Twilio From Number from .env: ' . $twilioWhatsAppFrom);
         if (! $twilioSid || ! $twilioAuthToken || ! $twilioWhatsAppFrom) {
             Log::error('Twilio credentials are not set in the .env file or cache.');
-            return; // Stop execution if credentials are not set
+            return;
         }
-        // Construct the message body
+        
         $messageBody = "🎉 *¡Su confirmación de orden DuranMKT!* 🎉\n\n";
         $messageBody .= "¡Gracias por su preferencia!. Revisaremos su solicitud lo mas pronto posible.\n\n";
         $messageBody .= "Hola *{$order->user->name}*,\n";
@@ -498,16 +541,15 @@ class OrdenController extends Controller
         try {
             $twilio = new Client($twilioSid, $twilioAuthToken);
             $message = $twilio->messages->create(
-                "whatsapp:{$recipientPhoneNumber}", // Recipient's phone number
+                "whatsapp:{$recipientPhoneNumber}",
                 [
-                    "from" => "whatsapp:{$twilioWhatsAppFrom}", // Your Twilio sandbox number
+                    "from" => "whatsapp:{$twilioWhatsAppFrom}",
                     "body" => $messageBody,
                 ]
 
             );
              Log::info('WhatsApp message sent successfully! SID: ' . $message->sid);
         } catch (\Exception $e) {
-            // Log the error for debugging
              Log::error('!!! WhatsApp notification failed !!!');
         Log::error('Twilio Error: ' . $e->getMessage());
             Log::error('WhatsApp notification failed: ' . $e->getMessage());
@@ -572,20 +614,6 @@ class OrdenController extends Controller
             if ($orden->user && $orden->user->email) {
                 Mail::to($orden->user->email)->send(new OrderCompleted($orden));
             }
-
-            // if ($orden->user && $orden->user->telefono) {
-            //     $message = "¡Hola, {$orden->user->name}! Tu pedido con folio #{$orden->folio} está listo para recoger. ¡Gracias por tu compra en ".config('app.name')."!";
-                
-              
-            //     $whatsappController = new WhatsAppController();
-            //     $whatsappController->sendWhatsAppMessage(
-            //         new Request([
-            //             'phone' => $orden->user->telefono,
-            //             'message' => $message
-            //         ])
-            //     );
-            // }
-
             return back()->with('success', 'Orden marcada como completada. Se ha notificado al cliente.');
 
         } catch (\Exception $e) {
@@ -600,7 +628,8 @@ class OrdenController extends Controller
             'precio_unitario' => 'required|numeric|min:1',
             'options' => 'sometimes|array',
             'options.*' => 'string|nullable',
-            'design_choice_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ajustado a 10MB como pediste en el anterior
+            'design_choice_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'Mensaje' => 'sometimes|string|max:5000'
         ]);
 
 
@@ -617,6 +646,18 @@ class OrdenController extends Controller
                     $opcion->save();
                 }
             }
+        }
+
+
+        if ($request->filled('Mensaje')) {
+            $ordenProducto->opciones()->updateOrCreate(
+                [
+                    'option_name' => 'Mensaje'
+                ],
+                [
+                    'option_value' => $request->input('Mensaje')
+                ]
+            );
         }
         
         if ($request->hasFile('design_choice_image')) {

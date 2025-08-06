@@ -28,7 +28,7 @@
                    data-category-image-url="/storage/images/mktPlace.png"
                    data-category-name="El alcance completo de nuestra empresa."
                    style="background-image: linear-gradient(to top, rgba(0,0,0,10), transparent), url('/storage/images/MARKETING-DIGITAL.WEBP')"
-                   data-category-description="Una vista amplia a todos nuestros productos y servicios"> {{-- Asegúrate de tener una descripción en tu modelo de categoría --}}
+                   data-category-description="Una vista amplia a todos nuestros productos y servicios"> 
                     <div>
                         <h3 class="text-white text-xl font-bold capitalize">Todos</h3>
                     </div>
@@ -54,7 +54,7 @@
                    data-category-id="{{ $category->id }}"
                    data-category-name="{{ $category->name }}"
                    data-category-image-url="/storage/{{$category->big_picture }}" 
-                   data-category-description="{{ $category->description ?? 'No hay descripción disponible para esta categoría.' }}"> {{-- Asegúrate de tener una descripción en tu modelo de categoría --}}
+                   data-category-description="{{ $category->description ?? 'No hay descripción disponible para esta categoría.' }}"> 
                     <div>
                         <h3 class="text-white text-xl font-bold capitalize">{{ $category->name }}</h3>
                     </div>
@@ -71,7 +71,6 @@
                 @include('partials.tienda.listaProductos', ['productos' => $productos])
                 </div>
 
-                <!-- Pagination -->
                 <div class="mt-8 from-beige to-mktPurple bg-gradient-to-b p-4 shadow-md">
                     {{ $productos->links() }}
                 </div>
@@ -87,30 +86,22 @@
         const heroDescription = document.getElementById('hero-description');
         const categoryCards = document.querySelectorAll('.category-card');
 
-        // Almacenar los valores originales para restaurar si es necesario
         const originalHeroTitle = heroTitle.textContent;
         const originalHeroDescription = heroDescription.textContent;
-        const originalHeroBackgroundClass = heroSection.className; // Captura todas las clases incluyendo el gradiente
+        const originalHeroBackgroundClass = heroSection.className; 
 
 
         categoryCards.forEach(card => {
             card.addEventListener('click', function(event) {
-                event.preventDefault(); // Evita que la página se recargue al hacer clic en el <a>
+                event.preventDefault(); 
 
                     const categoryId = this.dataset.categoryId;
                 const categoryName = this.dataset.categoryName;
                 const categoryImageUrl = this.dataset.categoryImageUrl;
-                const categoryDescription = this.dataset.categoryDescription || categoryDescriptions[categoryName.toLowerCase()]; // Usa la del data-attribute o el objeto local
+                const categoryDescription = this.dataset.categoryDescription || categoryDescriptions[categoryName.toLowerCase()]; 
 
-                // 1. Reemplazar el fondo de la hero section
-                // Removemos las clases de gradiente y agregamos la imagen
-                //heroSection.classList.remove('from-primary', 'to-mktPurple', 'bg-gradient-to-r');
                 heroSection.style.backgroundImage = `linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('${categoryImageUrl}')`;
-
-                // 2. Reemplazar el texto del h2
                 heroTitle.textContent = categoryName;
-
-                // 3. Reemplazar el texto del p
                 heroDescription.textContent = categoryDescription;
                 fetch(`/products/filter/${categoryId}`)
                     .then(response => response.text())
@@ -120,15 +111,6 @@
                     .catch(error => console.error('Error al filtrar productos:', error));
             });
         });
-
-        // Opcional: Función para restaurar la sección hero a su estado original
-        // Podrías llamarla si añades un botón de "Restaurar" o un temporizador
-        // function restoreHeroSection() {
-        //     heroSection.className = originalHeroBackgroundClass; // Restaura las clases originales
-        //     heroSection.style.backgroundImage = ''; // Elimina el estilo de imagen de fondo
-        //     heroTitle.textContent = originalHeroTitle;
-        //     heroDescription.textContent = originalHeroDescription;
-        // }
     });
 </script>
 @endsection

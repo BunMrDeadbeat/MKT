@@ -49,7 +49,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     Route::delete('/categories/bye/{category}', [CategoriesController::class, 'destroy'])->name('admin.categories.destroy');
     Route::put('/categories/edit/{category}', [CategoriesController::class, 'update'])->name('admin.categories.update');
 
-
+    Route::get('/servicios', [ProductController::class, 'loadAddServices'])->name('admin.services');
     Route::get('/productos', [ProductController::class, 'loadAddProducts'])->name('admin.products');
     Route::post('/productos/add', [ProductController::class, 'store'])->name('products.store');
     Route::put('/productos/edit/{id}', [ProductController::class, 'update'])->name('products.update');
@@ -103,10 +103,24 @@ Route::prefix('user')->middleware(['auth'])->middleware('verified')->name('user.
 //activar middleware en éste
 Route::post('/ordenes/crear', [OrdenController::class, 'store'])->name('orders.store')->middleware('auth')->middleware('verified');
 Route::post('/ordenes/guardar', [OrdenController::class, 'storeCart'])->name('orders.storeCart')->middleware('auth')->middleware('verified');
+Route::post('/solicitud/{servicio}/crear',[OrdenController::class, 'storeServiceSolicitation'])->name('service.request.submit')->middleware('auth')->middleware('verified');
 
 Route::get('mail1',function(){
     $order = Orden::where('user_id', auth()->id())->latest()->first()->load(['product', 'user']);
     return view('mail.formato-orden',compact('order'));
+});
+Route::get('mail3',function(){
+
+$order = Orden::with(['product.producto', 'user']) // Precargamos toda la cadena de relaciones
+    ->where('user_id', auth()->id())
+    ->whereHas('product', function ($pivotQuery) {
+        $pivotQuery->whereHas('producto', function ($productQuery) {
+            $productQuery->where('type', 'service');
+        });
+    }, '=', 1)
+    ->latest()
+    ->first();
+    return view('mail.formato-solicitud-servicio',compact('order'));
 });
 Route::get('mail2',function(){
     $order = Orden::where('user_id', auth()->id())->latest()->first()->load(['product', 'user']);

@@ -113,7 +113,7 @@
              
 <div x-data="orderModal()">
     <section class="bg-gray-800 p-6 rounded-lg shadow-md relative">
-        <h2 class="text-2xl font-semibold mb-4 text-gray-200">Mis Órdenes</h2>
+        <h2 class="text-2xl font-semibold mb-4 text-gray-200">Mis Órdenes y Solicitudes</h2>
         <div class="overflow-x-auto [mask-image:linear-gradient(to_right,rgba(0,0,0,1)_85%,rgba(0,0,0,0))]">
             <table class="min-w-full divide-y divide-gray-700">
                 <thead class="bg-gray-700/50">
@@ -281,7 +281,7 @@
     </div>
 </div>
 
-                <section class="bg-gray-800 p-6 rounded-lg shadow-md">
+                <section id="modificar" class="bg-gray-800 p-6 rounded-lg shadow-md">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-200">Modificar Perfil</h2>
                     <form action="{{ route('user.update.profile') }}" method="POST">
                         @csrf
@@ -386,5 +386,15 @@ function orderModal() {
 }
 </script>
 <script type="module" src="{{ asset('js/profilescripts.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash === '#modificar') {
+            const section = document.getElementById('modificar');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+</script>
 </body>
 </html>
