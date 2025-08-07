@@ -34,6 +34,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     Route::post('/ordenes/{orden}/complete', [OrdenController::class, 'completeOrder'])->name('admin.orders.complete');
     Route::post('/ordenes/{ordenProducto}/update-details', [OrdenController::class, 'updateDetails'])->name('admin.orders.updateDetails');
     Route::delete('/orders/product/{ordenProducto}', [OrdenController::class, 'destroyProduct'])->name('admin.orders.destroyProduct');
+    
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 

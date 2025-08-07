@@ -629,9 +629,19 @@ class OrdenController extends Controller
             'options' => 'sometimes|array',
             'options.*' => 'string|nullable',
             'design_choice_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
-            'Mensaje' => 'sometimes|string|max:5000'
+            'Mensaje' => 'nullable|string|max:5000'
         ]);
 
+        if ($request->input('delete_design_image') == '1') {
+            $designOpcion = $ordenProducto->opciones()->where('option_name', 'design')->first();
+
+            if ($designOpcion) {
+                if ($designOpcion->option_value && Storage::disk('public')->exists($designOpcion->option_value)) {
+                    Storage::disk('public')->delete($designOpcion->option_value);
+                }
+                $designOpcion->delete();
+            }
+        }
 
         $ordenProducto->precio_unitario = $request->input('precio_unitario');
         
@@ -721,4 +731,6 @@ class OrdenController extends Controller
                              ->with('error', 'Ocurrió un error al intentar eliminar el artículo.');
         }
     }
+
+    
 }

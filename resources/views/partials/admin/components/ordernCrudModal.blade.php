@@ -186,7 +186,7 @@
 
                                 @if ($opcion->option_name === 'design')
                                 <div class="md:col-span-2 p-4 border rounded-lg bg-gray-50">
-                                    <p class="font-semibold text-gray-700 mb-2">Diseño del Cliente:</p>
+                                    <p class="font-semibold text-gray-700 mb-2">Diseño:</p>
                                     <div class="flex items-center gap-4">
                                         <img src="{{ asset('storage/'.$opcion->option_value) }}" alt="Diseño" class="w-24 h-24 object-cover rounded-md">
                                         <a href="{{ asset('storage/'.$opcion->option_value) }}" download class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors">
@@ -207,8 +207,33 @@
                             
                             @if($hasDesignChoiceProfessional)
                             <div class="md:col-span-2">
-                                <label for="design_choice_image_{{ $ordenProducto->id }}" class="block text-sm font-medium text-gray-700">Subir/Actualizar Diseño Profesional</label>
-                                <p class="text-xs text-gray-500 mb-2">Sube un archivo para este producto.</p>
+                                <label class="block text-sm font-medium text-gray-700">Subir/Actualizar Diseño Profesional</label>
+                                
+                                @php
+                                    $professionalDesign = $ordenProducto->opciones->firstWhere('option_name', 'design');
+                                @endphp
+
+                                <div id="image_preview_container_{{ $ordenProducto->id }}">
+                                    @if($professionalDesign && $professionalDesign->option_value)
+                                    <div class="mt-2 p-4 border rounded-lg bg-gray-50 flex items-center justify-between gap-4">
+                                        <div class="flex items-center gap-4 flex-grow">
+                                            <img src="{{ asset('storage/'.$professionalDesign->option_value) }}" alt="Diseño Profesional" class="w-16 h-16 object-cover rounded-md">
+                                            <a href="{{ asset('storage/'.$professionalDesign->option_value) }}" download class="text-sm font-medium text-blue-600 hover:text-blue-800">Ver/Descargar</a>
+                                        </div>
+                                        <button type="button" onclick="markImageForDeletion({{ $ordenProducto->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200" title="Eliminar diseño actual">
+                                            <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                        </button>
+                                    </div>
+                                    @endif
+                                </div>
+
+                                <div id="image_deleted_message_{{ $ordenProducto->id }}" class="hidden mt-2 p-3 text-center bg-yellow-100 text-yellow-800 text-sm rounded-lg">
+                                    La imagen se eliminará al guardar los cambios.
+                                </div>
+
+                                <input type="hidden" name="delete_design_image" id="delete_design_image_{{ $ordenProducto->id }}" value="0">
+                                
+                                <p class="text-xs text-gray-500 my-2">Sube un archivo nuevo para reemplazar el existente.</p>
                                 <input type="file" id="design_choice_image_{{ $ordenProducto->id }}" name="design_choice_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                                 @error('design_choice_image') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -216,14 +241,14 @@
                         </div>
                         @endif
                         
-<label for='Mensaje' class="block text-sm font-medium text-gray-700">Adjuntar comentario</label>
-<textarea
-    id="Mensaje"
-    name="Mensaje"
-    rows="4"
-    class="border-2 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
->{{ old('Mensaje') }}</textarea>
-@error('Mensaje') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <label for='Mensaje' class="block text-sm font-medium text-gray-700">Adjuntar comentario</label>
+                        <textarea
+                            id="Mensaje"
+                            name="Mensaje"
+                            rows="4"
+                            class="border-2 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        >{{ old('Mensaje') }}</textarea>
+                        @error('Mensaje') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

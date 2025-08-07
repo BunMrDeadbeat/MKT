@@ -203,4 +203,13 @@
         document.getElementById(modalId).classList.add('hidden');
     }
 </script>
+<script>
+    function markImageForDeletion(productId) {
+        document.getElementById('image_preview_container_' + productId).style.display = 'none';
+        
+        document.getElementById('image_deleted_message_' + productId).style.display = 'block';
+        
+        document.getElementById('delete_design_image_' + productId).value = '1';
+    }
+</script>
 @endsection
