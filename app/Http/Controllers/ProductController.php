@@ -68,15 +68,25 @@ class ProductController extends Controller
     public function loadStore()
     {
         $categorias = Category::all();
-        $productos = Product::with('options')->paginate(10);
+        $productos = Product::with('options')->whereHas('galleries', function ($query) {
+                        $query->where('is_featured', 1);
+                    })
+                    ->paginate(10);
         return view('store', compact( 'categorias', 'productos'));
     }
     public function filterByCategory($categoryId)
     {   if($categoryId == 0){
-            $productos = Product::paginate(12);
-            return view('partials.tienda.listaProductos', compact('productos'))->render();
+        $categorias = Category::all();
+            $productos = Product::with('options')->whereHas('galleries', function ($query) {
+                        $query->where('is_featured', 1);
+                    })
+                    ->paginate(10);
+        return view('partials.tienda.listaProductos', compact('productos'))->render();
         }
-        $productos = Product::where('category_id', $categoryId)->paginate(12);
+        $productos = Product::where('category_id', $categoryId)->whereHas('galleries', function ($query) {
+                        $query->where('is_featured', 1);
+                    })
+                    ->paginate(10);
         return view('partials.tienda.listaProductos', compact('productos'))->render();
     }
  

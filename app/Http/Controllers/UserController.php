@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -55,6 +56,13 @@ class UserController extends Controller
             'selectedDateRange'));
     }
 
+     public function getUserDetails(User $user)
+    {
+        $user->load('roles', 'cart.productos.producto', 'sessions');  
+        return response()->json($user);
+    }
+
+
    public function loadDashboard()
     {
         $user = Auth::user();
@@ -74,13 +82,51 @@ class UserController extends Controller
 
         return back()->with('success', 'Rol de usuario actualizado correctamente.');
     }
-    
-    
-    public function getUserDetails(User $user)
-    {
-        return response()->json($user->load('roles'));
-    }
 
+    public function destroy(User $user)
+    {
+        if ($user->id === Auth::id()) {
+            return response()->json(['message' => 'No puedes eliminar tu propia cuenta.'], 403);
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'Usuario eliminado correctamente.']);
+    }
+    public function updateFromModal(Request $request, User $user)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'telefono' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:8',
+            'email_action' => 'nullable|string|in:verify,unverify'
+        ]);
+
+        $user->name = $validatedData['name'];
+        $user->telefono = $validatedData['telefono'];
+
+        if ($user->email !== $validatedData['email']) {
+            $user->email = $validatedData['email'];
+            $user->email_verified_at = now();
+        }
+
+        if (!empty($validatedData['password'])) {
+            $user->password = Hash::make($validatedData['password']);
+        }
+
+        if ($request->has('email_action')) {
+            if ($validatedData['email_action'] === 'verify') {
+                $user->email_verified_at = now();
+            } elseif ($validatedData['email_action'] === 'unverify') {
+                $user->email_verified_at = null;
+            }
+        }
+        
+        $user->save();
+
+        return response()->json(['success' => 'Usuario actualizado correctamente.']);
+    }
     public function updateProfile(Request $request)
     {
         $user = Auth::user();

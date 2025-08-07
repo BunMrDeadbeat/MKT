@@ -29,30 +29,25 @@
 </head>
 <body class="bg-gray-900 text-gray-300 font-sans">
 
-    {{-- INICIO DEL HEADER --}}
     <header x-data="{ mobileMenuOpen: false }" class="bg-gray-800 shadow-lg sticky top-0 z-50">
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                {{-- Logo o Nombre de la Tienda --}}
                 <div class="flex-shrink-0">
                     <a href="{{ url('/') }}">
                         <img class="h-10 w-auto" src="{{ asset('storage/images/logo.png') }}" alt="MiTienda Logo">
                     </a>
                 </div>
 
-                {{-- Navegación Principal (Escritorio) --}}
                 <div class="hidden md:flex md:items-center md:space-x-8">
                     <a href="{{ url('/') }}" class="text-gray-300 hover:text-violet-400 transition-colors">Inicio</a>
                     <a href="{{ url('/store') }}" class="text-gray-300 hover:text-violet-400 transition-colors">Tienda</a>
                 </div>
 
-                {{-- Iconos de la derecha y Menú de Usuario (Escritorio) --}}
                 <div class="hidden md:flex items-center space-x-5">
                     <a href="{{ url('/carrito') }}" class="text-gray-300 hover:text-violet-400 relative">
                         <i class="fas fa-shopping-cart fa-lg"></i>
                     </a>
                     
-                    {{-- Menú Desplegable de Usuario --}}
                     <div class="relative group">
                         <button class="flex items-center space-x-2 text-gray-300 hover:text-violet-400">
                             <i class="fas fa-user-circle fa-lg"></i>
@@ -63,7 +58,9 @@
                 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 
                 transition-all duration-500 ease-out origin-top-right
                 pointer-events-none group-hover:pointer-events-auto">
-                            <a href="{{ route('user.dash') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-violet-500 hover:text-white">Mi Panel</a>
+                            @if (auth()->user()->roles->first()->id === 1)
+                                <a href="{{ route('admin.dash') }}" class="block py-2 px-4 text-sm text-gray-300 font-semibold hover:bg-gray-700">Panel de administración</a>
+                            @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-gray-300 hover:bg-violet-500 hover:text-white">
@@ -74,7 +71,6 @@
                     </div>
                 </div>
 
-                {{-- Botón de Menú Móvil --}}
                 <div class="md:hidden flex items-center">
                     <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-300 hover:text-violet-400 focus:outline-none">
                         <i class="fas" :class="{ 'fa-bars': !mobileMenuOpen, 'fa-times': mobileMenuOpen }"></i>
@@ -82,12 +78,14 @@
                 </div>
             </div>
 
-            {{-- Menú Móvil Desplegable --}}
             <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" class="md:hidden pb-4">
                  <a href="{{ url('/') }}" class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-700">Inicio</a>
                  <a href="{{ url('/store') }}" class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-700">Tienda</a>
                  <a href="{{ url('/carrito') }}" class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-700">Carrito</a>
-                 <a href="{{ route('user.dash') }}" class="block py-2 px-4 text-sm text-gray-300 font-semibold hover:bg-gray-700">Mi Panel</a>
+                 
+                 @if (auth()->user()->roles->first()->id === 1)
+                     <a href="{{ route('admin.dash') }}" class="block py-2 px-4 text-sm text-gray-300 font-semibold hover:bg-gray-700">Panel de administración</a>
+                 @endif
                  <form method="POST" action="{{ route('logout') }}">
                      @csrf
                      <button type="submit" class="w-full text-left block py-2 px-4 text-sm text-gray-300 hover:bg-gray-700">
@@ -97,7 +95,6 @@
             </div>
         </nav>
     </header>
-    {{-- FIN DEL HEADER --}}
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
 
@@ -118,16 +115,22 @@
             <table class="min-w-full divide-y divide-gray-700">
                 <thead class="bg-gray-700/50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Detalles</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Folio</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Fecha</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Estado</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Detalles</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Consultar</th>
                     </tr>
                 </thead>
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
                     @forelse($orders as $order)
+                    
                     <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button @click="show({{ $order->id }})" class="text-violet-400 hover:text-violet-300 font-semibold">
+                                <i class="fas fa-eye mr-1"></i> Ver Detalle
+                            </button>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">{{ $order->folio }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ $order->created_at->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -138,11 +141,6 @@
                                 @else bg-red-900 text-red-300 @endif">
                                 {{ ucfirst($order->status) }}
                             </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <button @click="show({{ $order->id }})" class="text-violet-400 hover:text-violet-300 font-semibold">
-                                <i class="fas fa-eye mr-1"></i> Ver Detalle
-                            </button>
                         </td>
                         <td class="px-6 whitespace-nowrap text-xl text-center">
                             <a href="https://wa.me/{{ env('WHATSAPP_SUPPORT_NUMBER') }}?text={{ urlencode('Hola, quiero información sobre mi orden con folio ' . $order->folio) }}" target="_blank" rel="noopener noreferrer">

@@ -4,7 +4,6 @@
                     @php
                 $featuredGallery = $product->galleries->firstWhere('is_featured', 1);
                     @endphp
-                    {{-- @if ($featuredGallery && $featuredGallery->image && $product->status === 'active') --}}
                     @if ($featuredGallery && $featuredGallery->image && $product->status === 'active')
                         <div class="bg-white rounded-lg  overflow-hidden hover:shadow-lg transition-all w-full sm:w-60 flex-shrink-0 h-120 flex flex-col shadow-lg shadow-neutral-800">
                             <a href="{{ route('products.show', $product->slug) }}">
@@ -31,7 +30,7 @@
 
                                         @elseif ($product->price>0)
                                         <div class="flex justify-between items-center m-2">
-                                            <span class="text-primary font-bold">¡Disponible por <span class="text-mktGreen">${{ $product->price }}!</span></span>
+                                            <span class="text-primary font-bold">¡Disponible por <span class="text-mktGreen">${{ $product->price }}</span>!</span>
                                         </div>
                                         @else
                                         <div class="flex justify-between items-center m-2">
@@ -55,3 +54,7 @@
                     @endif
     @endforeach
 </div>
+
+    <div class="pagination-container mt-8 from-beige to-mktPurple bg-gradient-to-b p-4 shadow-md">
+        {{ $productos->links() }}
+    </div>

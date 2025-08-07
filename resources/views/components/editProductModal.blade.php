@@ -69,7 +69,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="edit-product-type-modal" class="block text-sm font-medium text-gray-700 mb-1">Tipo <span class="text-gray-400">(diseño de página)</span></label>
+                                        <label for="edit-product-type-modal" class="block text-sm font-medium text-gray-700 mb-1">Tipo <span class="text-gray-400">(Mover)</span></label>
                                         <select  id="edit-product-type-modal" name="type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-mktPurple focus:border-mktPurple">
                                             <option value="{{ $editProduct->type }}">{{ $editProduct->type == 'product' ? 'Producto' : 'Servicio' }}</option>
                                             <option value="{{ $editProduct->type == 'product' ? 'service' : 'product' }}">{{ $editProduct->type == 'product' ? 'Servicio' : 'Producto' }}</option>

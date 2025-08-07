@@ -5,8 +5,8 @@
 ])
 @include('partials.usersTable')
 
-@include('partials.usersBulkActions', [
+{{-- @include('partials.usersBulkActions', [
     'numSelected' => 0 
-])
+]) --}}
 
 @include('partials.userDetailsModal')

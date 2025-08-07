@@ -71,9 +71,6 @@
                 @include('partials.tienda.listaProductos', ['productos' => $productos])
                 </div>
 
-                <div class="mt-8 from-beige to-mktPurple bg-gradient-to-b p-4 shadow-md">
-                    {{ $productos->links() }}
-                </div>
             </section> 
     @endsection
 
@@ -85,31 +82,53 @@
         const heroTitle = document.getElementById('hero-title');
         const heroDescription = document.getElementById('hero-description');
         const categoryCards = document.querySelectorAll('.category-card');
+        const productsContainer = document.getElementById('products-container');
 
-        const originalHeroTitle = heroTitle.textContent;
-        const originalHeroDescription = heroDescription.textContent;
-        const originalHeroBackgroundClass = heroSection.className; 
-
+        function loadProducts(url) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('La respuesta de la red no fue correcta.');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    productsContainer.innerHTML = html;
+                    productsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(error => {
+                    console.error('Error al cargar los productos:', error);
+                    productsContainer.innerHTML = '<p class="text-center text-red-500">Hubo un error al cargar el contenido.</p>';
+                });
+        }
 
         categoryCards.forEach(card => {
             card.addEventListener('click', function(event) {
-                event.preventDefault(); 
+                event.preventDefault();
 
-                    const categoryId = this.dataset.categoryId;
+                const categoryId = this.dataset.categoryId;
                 const categoryName = this.dataset.categoryName;
                 const categoryImageUrl = this.dataset.categoryImageUrl;
-                const categoryDescription = this.dataset.categoryDescription || categoryDescriptions[categoryName.toLowerCase()]; 
+                const categoryDescription = this.dataset.categoryDescription;
 
                 heroSection.style.backgroundImage = `linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('${categoryImageUrl}')`;
                 heroTitle.textContent = categoryName;
                 heroDescription.textContent = categoryDescription;
-                fetch(`/products/filter/${categoryId}`)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById('products-container').innerHTML = html;
-                    })
-                    .catch(error => console.error('Error al filtrar productos:', error));
+                
+                loadProducts(`/products/filter/${categoryId}`);
             });
+        });
+
+        productsContainer.addEventListener('click', function(event) {
+            const paginationLink = event.target.closest('.pagination-container a');
+
+            if (paginationLink) {
+                event.preventDefault();
+                const url = paginationLink.href;
+                if (url) {
+                    loadProducts(url);
+                }
+            }
         });
     });
 </script>

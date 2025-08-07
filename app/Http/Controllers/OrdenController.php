@@ -334,7 +334,7 @@ class OrdenController extends Controller
         'company_size'    => ['required', 'string', Rule::in(['1-10 empleados', '11-50 empleados', '51-200 empleados', '201-500 empleados', '+500 empleados'])],
         'website'         => 'nullable|url|max:255',
         'project_details' => 'required|string|max:5000',
-        'budget'          => ['required', 'string', Rule::in(['A discutir', 'Menos de $10,000', '$10,000 - $40,0000', '$40,0000 - $200,000', 'Más de $200,000'])],
+        'budget'          => ['sometimes', 'string', Rule::in(['A discutir', 'Menos de $10,000', '$10,000 - $40,0000', '$40,0000 - $200,000', 'Más de $200,000'])],
         'urgency'         => ['required', 'string', Rule::in(['Baja', 'Media', 'Alta', 'Inmediata'])],
         ];
             $validated = $request->validate($rules);

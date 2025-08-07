@@ -1,4 +1,3 @@
-<!-- Modal para Añadir Servicio con QuillJS y Galería -->
 <div x-show="showAddModal" x-transition x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div @click.away="showAddModal = false" class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         <div class="p-4 border-b flex justify-between items-center">

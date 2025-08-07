@@ -38,10 +38,11 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/usuarios', [UserController::class, 'loadUsers'])->name('admin.users');
-    Route::get('/usuarios/{id}', [UserController::class, 'loadUsers'])->name('admin.editUsers');
     Route::put('/usuarios/{user}/update-role', [UserController::class, 'updateUserRole'])->name('admin.users.updateRole');
     Route::get('/usuarios/{user}/details', [UserController::class, 'getUserDetails'])->name('admin.users.details');
-    
+    Route::put('/usuarios/{user}/update-admin', [UserController::class, 'updateFromModal'])->name('admin.users.updateAdmin');
+    Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy')->middleware('role:admin');
+
     Route::get('/categorias', [CategoriesController::class, 'index'])->name('admin.categories');
     Route::get('/categorias-editing', [CategoriesController::class, 'indexEditMode'])->name('admin.categories.editMode');
     Route::get('/categorias/{id}', [CategoriesController::class, 'indexProducts'])->name('admin.categories.showProducts');

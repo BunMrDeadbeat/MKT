@@ -64,7 +64,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="product-type-modal" class="block text-sm font-medium text-gray-700 mb-1">Tipo <span class="text-gray-400">(diseño de pagina)</span></label>
+                                        <label for="product-type-modal" class="block text-sm font-medium text-gray-700 mb-1">Tipo <span class="text-gray-400">(Mover)</span></label>
                                         <select name="type" id="product-type-modal" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
                                             <option value="product">Producto</option>
                                             <option value="service">Servicio</option>

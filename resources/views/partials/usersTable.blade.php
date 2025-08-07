@@ -47,8 +47,8 @@
                                 <button onclick="openUserDetailsModal({{ $user->id }})" class="text-yellow-600 hover:text-yellow-900 action-btn"> 
                                     <i class="fas fa-edit"></i> 
                                 </button>
-                                <button class="text-red-600 hover:text-red-900 action-btn"> 
-                                    <i class="fas fa-trash-alt"></i> 
+                                <button onclick="confirmUserDeletion({{ $user->id }}, '{{ e($user->name) }}')" class="text-red-600 hover:text-red-900 action-btn">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>

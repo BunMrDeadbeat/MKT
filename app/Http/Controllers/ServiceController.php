@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -81,8 +82,16 @@ class ServiceController extends Controller
             'delete_gallery' => 'nullable|array',
             'delete_gallery.*' => 'integer|exists:galleries,id',
         ]);
+        try{
 
-        $service->update($validated);
+        $service->update([
+                'name' => $validated['name'],
+                'slug' => $validated['slug'],
+                'description' => $validated['description'],
+                'price' => $validated['price'],
+                'category_id' => $validated['category_id'],
+                'status' => $validated['status'],
+        ]);
 
         if (isset($validated['featured_gallery_id'])) {
             $service->galleries()->update(['is_featured' => false]);
@@ -94,6 +103,7 @@ class ServiceController extends Controller
                 $path = $file->store('products/gallery', 'public');
                 $service->galleries()->create(['image' => $path, 'is_featured' => false]);
             }
+            
         }
 
         if (!empty($validated['delete_gallery'])) {
@@ -103,14 +113,30 @@ class ServiceController extends Controller
                 $gallery->delete();
             }
         }
+        if (!isset($validated['featured_gallery_id'])) {
+                $hasFeaturedImage = $service->galleries()->where('is_featured', true)->exists();
+                if (!$hasFeaturedImage) {
+                    $firstGalleryItem = $service->galleries()->orderBy('id', 'asc')->first();
+
+                    if ($firstGalleryItem) {
+                        $firstGalleryItem->is_featured = true;
+                        $firstGalleryItem->save();
+                    }
+                }
+            }
 
         if ($validated['price'] > 0) {
             $service->options()->syncWithoutDetaching([11]);
         } else {
             $service->options()->detach(11);
         }
-
         return redirect()->route('admin.services.index')->with('success', 'Servicio actualizado exitosamente.');
+
+        }
+        catch(\Exception $e)
+        {
+        return redirect()->route('admin.services.index')->with('error', 'Algo salio mal:' . $e->getMessage());
+        }
     }
 
     public function destroy(Product $service)

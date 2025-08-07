@@ -87,9 +87,23 @@ class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 <script>
 document.addEventListener('alpine:init', () => {
     if (document.getElementById('quill-editor-add')) {
-        new Quill('#quill-editor-add', {
+         const options = {
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }, { 'size': ['small', false, 'large', 'huge'] }, { 'font': [] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'align': [] }],
+                    ['clean']
+                ]
+            },
             theme: 'snow'
-        });
+        };
+        new Quill('#quill-editor-add', options);
     }
 });
 

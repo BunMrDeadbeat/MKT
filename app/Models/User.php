@@ -77,7 +77,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasRole('admin');
     }
-
+    public function sessions()
+    {
+        return $this->hasMany(\App\Models\Session::class);
+    }
     public function cart()
     {
         return $this->hasOne(Cart::class, 'user_id');
