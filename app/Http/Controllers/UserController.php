@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Orden;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -15,48 +17,121 @@ use Carbon\Carbon;
 
 class UserController extends Controller
 {
+    // function loadUsers(Request $request){
+    //     $headerTitle = 'Usuarios';
+    //     $query = User::with('roles');
+
+    //     if ($request->has('search') && $request->search != '') {
+    //         $searchTerm = '%' . $request->search . '%';
+    //         $query->where(function($q) use ($searchTerm) {
+    //             $q->where('name', 'like', $searchTerm)
+    //               ->orWhere('email', 'like', $searchTerm);
+    //         });
+    //     }
+
+    //     if ($request->has('role_filter') && $request->role_filter != 'todos') {
+    //         $query->whereHas('roles', function ($q) use ($request) {
+    //             $q->where('name', $request->role_filter);
+    //         });
+    //     }
+        
+    //     $users = $query->paginate(10);
+    //     $roles = Role::pluck('name')->toArray();
+    //     array_unshift($roles, 'Todos');
+
+    //     $statuses = ['Todos', 'Activo', 'Inactivo', 'Suspendido'];
+    //     $dateRanges = ['Todas', 'Hoy', 'Ultima semana', 'Ultimo mes'];
+
+    //     $selectedStatus = $request->input('status_filter', 'todos');
+    //     $selectedRole = $request->input('role_filter', 'todos');
+    //     $selectedDateRange = $request->input('date_range_filter', 'todas');
+
+    //     return view('adminUsers',compact('headerTitle', 'users',
+    //         'statuses',
+    //         'roles',
+    //         'dateRanges',
+    //         'selectedStatus',
+    //         'selectedRole',
+    //         'selectedDateRange'
+    //     ));
+            
+    // }
+
+    
     function loadUsers(Request $request){
         $headerTitle = 'Usuarios';
-        // Añadido para la nueva funcionalidad de filtros y paginación
         $query = User::with('roles');
 
-        // Filtro por nombre, email o teléfono
         if ($request->has('search') && $request->search != '') {
             $searchTerm = '%' . $request->search . '%';
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'like', $searchTerm)
-                  ->orWhere('email', 'like', $searchTerm);
+                  ->orWhere('email', 'like', 'searchTerm');
             });
         }
 
-        // Filtro por rol
         if ($request->has('role_filter') && $request->role_filter != 'todos') {
             $query->whereHas('roles', function ($q) use ($request) {
                 $q->where('name', $request->role_filter);
             });
         }
-        
+
+        if ($request->has('active_session_only') && $request->active_session_only) {
+            $query->whereHas('sessions');
+        }
+
+        $sortBy = $request->input('sort_by', 'default');
+        switch ($sortBy) {
+            case 'recent_session':
+                $query->orderByDesc(
+                    Session::select('last_activity')
+                        ->whereColumn('sessions.user_id', 'users.id')
+                        ->latest('last_activity')
+                        ->limit(1)
+                );
+                break;
+            
+            case 'cart_products':
+                $query->select('users.*') 
+                      ->withCount(['cart as products_in_cart_count' => function ($query) {
+                          $query->select(DB::raw('sum(carts_products.quantity)'))
+                                ->join('carts_products', 'carts.id', '=', 'carts_products.cart_id');
+                      }])
+                      ->orderByDesc('products_in_cart_count');
+                break;
+
+            default:
+                $query->latest();
+                break;
+        }
+
         $users = $query->paginate(10);
+        
         $roles = Role::pluck('name')->toArray();
         array_unshift($roles, 'Todos');
 
-        $statuses = ['Todos', 'Activo', 'Inactivo', 'Suspendido'];
-        $dateRanges = ['Todas', 'Hoy', 'Ultima semana', 'Ultimo mes'];
+        $sortOptions = [
+            'default' => 'Usuarios más nuevos',
+            'recent_session' => 'Sesión más reciente',
+            'cart_products' => 'Más productos en carrito',
+        ];
 
-        $selectedStatus = $request->input('status_filter', 'todos');
         $selectedRole = $request->input('role_filter', 'todos');
-        $selectedDateRange = $request->input('date_range_filter', 'todas');
+        $selectedSortBy = $request->input('sort_by', 'default');
+        $showActiveOnly = $request->boolean('active_session_only');
 
-        return view('adminUsers',compact('headerTitle', 'users',
-            'statuses',
+        return view('adminUsers', compact(
+            'headerTitle', 
+            'users',
             'roles',
-            'dateRanges',
-            'selectedStatus',
+            'sortOptions',
             'selectedRole',
-            'selectedDateRange'));
+            'selectedSortBy', 
+            'showActiveOnly'
+        ));
     }
 
-     public function getUserDetails(User $user)
+    public function getUserDetails(User $user)
     {
         $user->load('roles', 'cart.productos.producto', 'sessions');  
         return response()->json($user);

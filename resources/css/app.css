@@ -271,18 +271,18 @@
         .overlay {
     height: 100%;
     width: 100%;
-    position: fixed; /* Stay in place */
-    z-index: 9999; /* Sit on top */
+    position: fixed; 
+    z-index: 9999;
     left: 0;
     top: 0;
-    background-color: rgba(0,0,0,0.9); /* Black background with opacity */
-    overflow: auto; /* Enable scroll if needed */
-    display: flex; /* Use flexbox for centering */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    visibility: hidden; /* Hidden by default */
-    opacity: 0; /* Hidden by default */
-    transition: visibility 0s, opacity 0.3s linear; /* Smooth transition */
+    background-color: rgba(0,0,0,0.9); 
+    overflow: auto;
+    display: flex; /* CENTRADO */
+    align-items: center; 
+    justify-content: center;
+    visibility: hidden; 
+    opacity: 0; 
+    transition: visibility 0s, opacity 0.3s linear; 
 }
 
 .overlay.visible {
@@ -295,10 +295,9 @@
     display: block;
     max-width: 90%;
     max-height: 90%;
-    object-fit: contain; /* Ensure the image fits within the overlay */
+    object-fit: contain;
 }
 
-/* Close button style */
 .close-button {
     position: absolute;
     top: 20px;
@@ -309,6 +308,45 @@
     transition: 0.3s;
     cursor: pointer;
 }
+.switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 24px;
+    }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 24px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #2563eb;
+    }
+    input:checked + .slider:before {
+        transform: translateX(24px);
+    }
 
 .close-button:hover,
 .close-button:focus {

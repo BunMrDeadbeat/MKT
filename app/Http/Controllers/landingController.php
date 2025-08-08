@@ -23,7 +23,7 @@ class landingController extends Controller
         })
         ->whereHas('galleries')
         ->pluck('id');
-        $randomIds = collect($productIds)->shuffle()->take(12);
+        $randomIds = collect($productIds)->shuffle()->take(8);
         $products = Product::whereIn('id', $randomIds)
             ->with('galleries')
             ->get();

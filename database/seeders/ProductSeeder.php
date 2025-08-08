@@ -54,10 +54,11 @@ class ProductSeeder extends Seeder
             ['name' => 'Paquete PRO', 'description' => 'Incluye 20 posts en Facebook, Instagram y TikTok, más una sesión de fotos. Un 25% de la inversión se destina a campañas publicitarias.', 'price' => 12000, 'category' => 'marketing', 'type' => 'service'],
         ];
 
+        $imageCounter = 1;
         foreach ($products as $productData) {
             $categoryName = $productData['category'];
             if (isset($categories[$categoryName])) {
-                Product::updateOrCreate(
+                $product = Product::updateOrCreate(
                     ['name' => $productData['name']], 
                     [
                         'slug' => Str::slug($productData['name'].'-'.uniqid()),
@@ -68,9 +69,17 @@ class ProductSeeder extends Seeder
                         'status' => 'active',
                     ]
                 );
+                $product->galleries()->where('is_featured', true)->delete();
+
+                $product->galleries()->create([
+                    'image' => '/products/gallery/' . $imageCounter . '.png',
+                    'is_featured' => true,
+                ]);
+                $imageCounter++;
             } else {
                 $this->command->warn("Omitiendo producto '{$productData['name']}' porque la categoría '{$categoryName}' no fue encontrada.");
             }
+
         }
 
         $this->command->info('Seeder de productos ejecutado correctamente.');

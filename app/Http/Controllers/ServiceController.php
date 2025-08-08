@@ -15,8 +15,8 @@ class ServiceController extends Controller
     {
         $headerTitle = 'Servicios';
         $categorias = Category::all();
+        $query = Product::with('category', 'options', 'galleries')->where('type', 'service');
 
-        $query = Product::with('category', 'options')->where('type', 'service');
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');

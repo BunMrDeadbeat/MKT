@@ -3,7 +3,6 @@
 @section('title', $headerTitle ?? 'Servicios')
 
 @section('content')
-{{-- Inicializamos Alpine.js y definimos las variables para controlar cada modal --}}
 <div x-data="{ 
     showAddModal: false, 
     showEditModal: null,  // Guardará el ID del servicio a editar
@@ -14,7 +13,6 @@ class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <h1 class="text-2xl font-semibold text-gray-800">{{ $headerTitle ?? 'Administrar Servicios' }}</h1>
     
-    {{-- Alertas --}}
     @if(session('success'))
         <div class="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
@@ -24,7 +22,6 @@ class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mt-6 bg-white shadow-md rounded-lg overflow-hidden">
         <div class="px-6 py-4 flex justify-between items-center border-b border-gray-200">
             <p class="text-lg font-semibold text-gray-700">Lista de Servicios</p>
-            {{-- Este botón ahora cambia la variable 'showAddModal' a true --}}
             <button @click="showAddModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                 <i class="fas fa-plus mr-2"></i>Añadir Servicio
             </button>
@@ -35,6 +32,7 @@ class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-800 text-white">
                         <tr>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Imagen</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Nombre</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Categoría</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Precio</th>
@@ -44,6 +42,14 @@ class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <tbody class="text-gray-700">
                         @forelse ($services as $service)
                             <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                            <td class="py-3 px-4">
+                                @if ($service->featured_image)
+                                    <img src="{{ asset('storage/' . $service->featured_image) }}" alt="Imagen de {{ $service->name }}" class="h-12 w-12 object-cover rounded-md">
+                                @else
+                                    <img src="{{ asset('/storage/images/placeholder.png')}}" class="h-12 w-12 object-cover rounded-md">
+
+                                @endif
+                            </td>
                                 <td class="py-3 px-4">{{ $service->name }}</td>
                                 <td class="py-3 px-4">{{ $service->category->name ?? 'N/A' }}</td>
                                 <td class="py-3 px-4">${{ number_format($service->price, 2) }}</td>

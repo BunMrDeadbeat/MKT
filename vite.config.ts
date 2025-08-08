@@ -27,7 +27,7 @@ export default defineConfig({
         port: 5174,
         strictPort: true, 
         hmr: {
-            host: '192.168.1.19',
+            host: '127.0.0.1',
             clientPort: 5174,
         },
         cors: true,

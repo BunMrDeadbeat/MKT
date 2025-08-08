@@ -14,29 +14,25 @@
 @isset($orders)
 <div class="mb-4 bg-white p-4 shadow rounded-lg">
     <form action="{{ route('admin.orders') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {{-- Campo de Búsqueda General --}}
         <div class="md:col-span-2">
             <label for="search" class="block text-sm font-medium text-gray-700">Buscar por Folio, Nombre, Email o Telefono.</label>
             <input type="text" name="search" id="search" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ request('search') }}" placeholder="Escribe aquí...">
         </div>
-        {{-- Campo de Estado de Pago --}}
+
         <div class="md:col-span-2">
             <label for="payment_status" class="block text-sm font-medium text-gray-700">Estado de Pago</label>
             <select name="payment_status" id="payment_status" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <option value="">Todos</option>
-                {{-- La directiva @selected de Blade simplifica la selección de la opción actual --}}
                 <option value="1" @selected(request('payment_status') == '1')>Pagado</option>
                 <option value="0" @selected(request('payment_status') === '0')>No Pagado</option>
             </select>
         </div>
 
-        {{-- Campo de Fecha de Inicio --}}
         <div>
             <label for="start_date" class="block text-sm font-medium text-gray-700">Fecha Desde</label>
             <input type="date" name="start_date" id="start_date" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ request('start_date') }}">
         </div>
 
-        {{-- Campo de Fecha de Fin --}}
         <div>
             <label for="end_date" class="block text-sm font-medium text-gray-700">Fecha Hasta</label>
             <input type="date" name="end_date" id="end_date" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ request('end_date') }}">
@@ -53,7 +49,11 @@
             </select>
         </div>
 
-        {{-- Botones de Acción --}}
+        <div class="md:col-span-2 lg:col-span-1">
+            <label for="product_id" class="block text-sm font-medium text-gray-700">ID Producto</label>
+            <input type="number" name="product_id" id="product_id" class="p-3 mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ request('product_id') }}" placeholder="Ej: 123">
+        </div>
+
         <div class="md:col-span-4 flex items-center justify-end space-x-2">
             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 <i class="fas fa-search mr-2"></i>Filtrar
@@ -90,7 +90,6 @@
       {{ $order->user->name ?? 'Usuario no disponible' }}
       </td>
       <td class="px-6 py-4 text-sm">
-      {{-- Puedes agregar estilos según el estado --}}
       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
         @if($order->status == 'completado') bg-green-100 text-green-800 
         @elseif($order->status == 'procesando') bg-blue-100 text-blue-800 

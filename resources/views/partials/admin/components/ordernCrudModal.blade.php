@@ -123,7 +123,7 @@
     @php
         $serviceDetailBlock = '';
         $isService = false;
-        if($ordenProducto->producto->type='service'){
+        if($ordenProducto->producto->type==='service'){
          $serviceDetailBlock = 'disabled';
          $isService = true;
         }
@@ -133,7 +133,14 @@
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="p-6">
                 <div class="flex flex-col sm:flex-row gap-6">
-                    <img src="{{ asset('storage/'.$ordenProducto->producto->galleries->where('is_featured', 1)->first()->image) }}" alt="{{ $ordenProducto->producto->name }}" class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                    @php
+                        $image = '/storage/images/placeholder.png';
+                        if($ordenProducto->producto->galleries->where('is_featured', 1)->first() !== null){
+                            $image = 'storage/'.$ordenProducto->producto->galleries->where('is_featured', 1)->first()->image;
+                        }
+
+                    @endphp
+                    <img src="{{ asset($image) }}" alt="{{ $ordenProducto->producto->name }}" class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
                     <div class="flex-grow">
                         <p class="font-bold text-lg text-gray-900">{{ $ordenProducto->producto->name }}</p>
                         @if ($ordenProducto->cotizado)

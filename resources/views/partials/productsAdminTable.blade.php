@@ -11,7 +11,6 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200" id="product-list">
-                                    <!-- aqui se insertan los rows de producto -->
                                     @if($products && $products->count())
                                         @foreach ($products as $product)
                                             <tr>
@@ -43,9 +42,7 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                                                     
-                                                    {{-- Puedes usar route() para generar URLs si tienes rutas nombradas para editar/eliminar --}}
-                                                    {{-- <button onclick='openEditProductModal(@json($product))' class="text-mktPurple hover:text-mktPurple-dark mr-3"> --}}
-                                                        <button onclick="window.location='{{ route('products.startupdate', ['id' => $product->id]) }}'"  class="text-mktPurple hover:text-mktPurple-dark mr-3">
+                                                    <button onclick="window.location='{{ route('products.startupdate', ['id' => $product->id]) }}'"  class="text-mktPurple hover:text-mktPurple-dark mr-3">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     <button 
@@ -69,7 +66,6 @@
 
                     @if($products && $products->hasPages())
                         <div class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
-                            {{-- Información de paginación --}}
                             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                 <div>
                                     <p class="text-sm text-gray-700">
@@ -82,7 +78,6 @@
                                         resultados
                                     </p>
                                 </div>
-                                {{-- Links de paginación --}}
                                 <div>
                                     {{ $products->links() }} 
                                 </div>

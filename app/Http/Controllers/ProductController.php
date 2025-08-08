@@ -35,16 +35,13 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        if ($product->cartsProducts()->exists()) {
-            return redirect()->route('admin.products')->with('error', 'No se puede eliminar el producto porque está en un carrito de compra.');
-        }
         try {
         $product->delete();
 
         return redirect()->route('admin.products')->with('success', 'Producto o servicio eliminado satisfactoriamente 😀');
         } catch (QueryException $e) {
             if ($e->errorInfo[1] == 1451) {
-                return redirect()->route('admin.products')->with('error', 'No se puede eliminar el producto porque está en un carrito de compra.');
+                return redirect()->route('admin.products')->with('error', 'No se puede eliminar el producto porque está en una orden. Considere desactivarlo.');
             }
 
             return redirect()->route('admin.products')->with('error', 'Error al eliminar el producto: ' . $e->getMessage());

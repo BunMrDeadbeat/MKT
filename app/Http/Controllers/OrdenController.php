@@ -74,6 +74,11 @@ class OrdenController extends Controller
          $query->when($request->filled('payment_status'), function ($q) use ($request) {
             return $q->where('pagado', $request->input('payment_status'));
         });
+        $query->when($request->filled('product_id'), function ($q) use ($request) {
+            return $q->whereHas('product', function ($productQuery) use ($request) {
+                $productQuery->where('product_id', $request->input('product_id'));
+            });
+        });
         $query->when($request->filled('order_status'), function ($q) use ($request) {
             return $q->where('status', $request->input('order_status'));
         });

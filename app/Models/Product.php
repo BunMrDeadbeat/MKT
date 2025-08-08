@@ -52,7 +52,6 @@ class Product extends Model
         parent::boot();
 
         static::deleted(function ($product) {
-            // carga todas las galerías relacionadas al producto que estas eliminando pedazo de babozo y elimina sus imágenes
             $product->galleries()->chunkById(200, function ($galleries) {
                 foreach ($galleries as $gallery) {
                     Storage::disk('public')->delete("$gallery->image");

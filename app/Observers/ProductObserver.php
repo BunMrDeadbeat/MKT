@@ -20,6 +20,10 @@ class ProductObserver
      */
     public function updated(Product $product): void
     {
+        if ($product->isDirty('status') && $product->status === 'inactive') {
+            CartProduct::where('product_id', $product->id)->delete();
+        }
+
         if ($product->isDirty('price')) {
             CartProduct::where('product_id', $product->id)
                        ->update(['unit_price' => $product->price]);
@@ -32,7 +36,7 @@ class ProductObserver
      */
     public function deleted(Product $product): void
     {
-        //
+        CartProduct::where('product_id', $product->id)->delete();
     }
 
     /**

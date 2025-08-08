@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -80,7 +81,7 @@ class CategoriesController extends Controller
     }
     public function destroy(Category $category)
     {
-
+        try{
         if ($category->main_picture != null) {
             Storage::disk('public')->delete($category->main_picture);
         }
@@ -93,6 +94,10 @@ class CategoriesController extends Controller
         
 
         return redirect()->route('admin.categories')->with('success', 'Categoría eliminada correctamente.');
+    }
+    catch(QueryException $e){
+        return redirect()->route('admin.categories')->with( 'error', 'No se pudo eliminar la categoría por conflicto de productos en ordenes, considere cambiar los productos de categoría.');
+    }
     }
     public function update(Request $request, Category $category)
     {
